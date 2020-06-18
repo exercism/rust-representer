@@ -1,7 +1,14 @@
+use std::env;
+use std::process;
+use std::fs::File;
+use std::io::Read;
+
 use quote::quote;
 use proc_macro2::{Ident, Span};
 use syn::visit_mut::{self, VisitMut};
-use syn::{File, PatIdent};
+use syn::PatIdent;
+
+const PLACEHOLDER: &str = "PLACEHOLDER";
 
 struct LetBindingReplace;
 
@@ -11,7 +18,7 @@ impl VisitMut for LetBindingReplace {
             attrs: vec![],
             by_ref: node.by_ref,
             mutability: node.mutability,
-            ident: Ident::new("PLACEHOLDER", Span::call_site()),
+            ident: Ident::new(PLACEHOLDER, Span::call_site()),
             subpat: None,
         };
         
@@ -20,14 +27,23 @@ impl VisitMut for LetBindingReplace {
 }
 
 fn main() {
-    let code = quote! {
-        fn main() {
-            let x = 5;
-            let _ = 999u256;
+    let mut args = env::args();
+    let _ = args.next();
+
+    let filename = match (args.next(), args.next()) {
+        (Some(filename), None) => filename, 
+        _ => {
+            eprintln!("Usage: representer path/to/filename.rs");
+            process::exit(1);
         }
     };
 
-    let mut syntax_tree: File = syn::parse2(code).unwrap();
+    let mut file = File::open(&filename).expect("Unable to open file");
+    let mut src = String::new();
+    
+    file.read_to_string(&mut src).expect("Unable to read file");
+
+    let mut syntax_tree: syn::File = syn::parse_file(&src).expect("Unable to parse file");
     LetBindingReplace.visit_file_mut(&mut syntax_tree);
     println!("{}", quote!(#syntax_tree));
 }
