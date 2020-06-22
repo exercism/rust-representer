@@ -66,3 +66,14 @@ fn test_const_names() -> Result<(), Box<dyn Error>> {
 
     Ok(())
 }
+
+#[test]
+fn test_static_names() -> Result<(), Box<dyn Error>> {
+    let input = include_str!("test_input/static_names.rs");
+    let expected = include_str!("expected_output/static_names.rs");
+
+    let replaced = representer::replace(&input)?;
+    assert_eq!(replaced.to_string(), expected);
+
+    Ok(())
+}

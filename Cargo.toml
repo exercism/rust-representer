@@ -8,5 +8,6 @@ edition = "2018"
 
 [dependencies]
 quote = "1.0"
+lazy_static = "1.4.0"
 proc-macro2 = "1.0.18"
 syn = { version = "1.0.31", features = ["parsing", "full", "visit-mut"] }
