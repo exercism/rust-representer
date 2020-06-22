@@ -1,0 +1,1 @@
+pub enum PLACEHOLDER_1 < A , B > { A ( A ) , B ( B ) , }

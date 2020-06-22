@@ -1,41 +1,58 @@
-use std::fs::File;
-use std::io::Read;
-use std::path::Path;
+use std::error::Error;
+use std::include_str;
 
 #[test]
-fn test_single_let_binding() {
-    let input_path = Path::new("./tests/test_input/single_let_binding.rs");
-    let mut input_file = File::open(input_path).expect("Failed to open input file");
+fn test_single_let_binding() -> Result<(), Box<dyn Error>> {
+    let input = include_str!("test_input/single_let_binding.rs");
+    let expected = include_str!("expected_output/single_let_binding.rs");
 
-    let expected_path = Path::new("./tests/expected_output/single_let_binding.rs");
-    let mut expected_file = File::open(expected_path).expect("Failed to open expected file");
+    let replaced = representer::replace(&input)?;
 
-    let mut input_src = String::new();
-    let mut expected_src = String::new();
+    assert_eq!(replaced.to_string(), expected);
 
-    input_file.read_to_string(&mut input_src).expect("Failed to read input file");
-    expected_file.read_to_string(&mut expected_src).expect("Failed to read expected file");
-
-    let replaced = representer::replace(&input_src).expect("Error in `replace`");
-
-    assert_eq!(replaced.to_string(), expected_src);
+    Ok(())
 }
 
 #[test]
-fn test_multiple_let_bindings() {
-    let input_path = Path::new("./tests/test_input/multiple_let_bindings.rs");
-    let mut input_file = File::open(input_path).expect("Failed to open input file");
+fn test_multiple_let_bindings() -> Result<(), Box<dyn Error>> {
+    let input = include_str!("test_input/multiple_let_bindings.rs");
+    let expected = include_str!("expected_output/multiple_let_bindings.rs");
 
-    let expected_path = Path::new("./tests/expected_output/multiple_let_bindings.rs");
-    let mut expected_file = File::open(expected_path).expect("Failed to open expected file");
+    let replaced = representer::replace(&input)?;
+    assert_eq!(replaced.to_string(), expected);
 
-    let mut input_src = String::new();
-    let mut expected_src = String::new();
+    Ok(())
+}
 
-    input_file.read_to_string(&mut input_src).expect("Failed to read input file");
-    expected_file.read_to_string(&mut expected_src).expect("Failed to read expected file");
+#[test]
+fn test_struct_names() -> Result<(), Box<dyn Error>> {
+    let input = include_str!("test_input/struct_names.rs");
+    let expected = include_str!("expected_output/struct_names.rs");
 
-    let replaced = representer::replace(&input_src).expect("Error in `replace`");
+    let replaced = representer::replace(&input)?;
+    assert_eq!(replaced.to_string(), expected);
 
-    assert_eq!(replaced.to_string(), expected_src);
+    Ok(())
+}
+
+#[test]
+fn test_enum_names() -> Result<(), Box<dyn Error>> {
+    let input = include_str!("test_input/enum_names.rs");
+    let expected = include_str!("expected_output/enum_names.rs");
+
+    let replaced = representer::replace(&input)?;
+    assert_eq!(replaced.to_string(), expected);
+
+    Ok(())
+}
+
+#[test]
+fn test_fn_signatures() -> Result<(), Box<dyn Error>> {
+    let input = include_str!("test_input/fn_signatures.rs");
+    let expected = include_str!("expected_output/fn_signatures.rs");
+
+    let replaced = representer::replace(&input)?;
+    assert_eq!(replaced.to_string(), expected);
+
+    Ok(())
 }

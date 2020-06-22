@@ -1,7 +1,7 @@
 use std::env;
 use std::fs::File;
-use std::io::Read;
 use std::io::prelude::*;
+use std::io::Read;
 use std::process;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {

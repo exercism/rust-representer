@@ -1,0 +1,1 @@
+struct PLACEHOLDER_1 ; pub struct PLACEHOLDER_2 < A > { x : A }
