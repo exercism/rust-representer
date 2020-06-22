@@ -7,7 +7,6 @@ fn test_single_let_binding() -> Result<(), Box<dyn Error>> {
     let expected = include_str!("expected_output/single_let_binding.rs");
 
     let replaced = representer::replace(&input)?;
-
     assert_eq!(replaced.to_string(), expected);
 
     Ok(())
@@ -50,6 +49,17 @@ fn test_enum_names() -> Result<(), Box<dyn Error>> {
 fn test_fn_signatures() -> Result<(), Box<dyn Error>> {
     let input = include_str!("test_input/fn_signatures.rs");
     let expected = include_str!("expected_output/fn_signatures.rs");
+
+    let replaced = representer::replace(&input)?;
+    assert_eq!(replaced.to_string(), expected);
+
+    Ok(())
+}
+
+#[test]
+fn test_const_names() -> Result<(), Box<dyn Error>> {
+    let input = include_str!("test_input/const_names.rs");
+    let expected = include_str!("expected_output/const_names.rs");
 
     let replaced = representer::replace(&input)?;
     assert_eq!(replaced.to_string(), expected);
