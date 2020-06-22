@@ -1,7 +1,7 @@
 use proc_macro2::{Ident, Span, TokenStream};
 use quote::quote;
 use syn::visit_mut::{self, VisitMut};
-use syn::{ItemEnum, ItemStruct, PatIdent, Signature};
+use syn::{ItemConst, ItemEnum, ItemStruct, PatIdent, Signature};
 
 use std::collections::hash_map::Entry;
 use std::collections::HashMap;
@@ -135,6 +135,35 @@ impl VisitMut for IdentVisitor {
         }
 
         visit_mut::visit_signature_mut(self, node);
+    }
+
+    fn visit_item_const_mut(&mut self, node: &mut ItemConst) {
+        let ident_string = node.ident.to_string();
+
+        if !self.keywords.contains::<str>(&ident_string) {
+            let ph_num = match self.mappings.entry(ident_string) {
+                Entry::Occupied(o) => o.into_mut(),
+                Entry::Vacant(v) => {
+                    self.uid += 1;
+                    v.insert(self.uid)
+                }
+            };
+            let ph_string = format!("{}{}", PLACEHOLDER, ph_num);
+
+            *node = ItemConst {
+                attrs: vec![],
+                vis: node.vis.clone(),
+                const_token: node.const_token,
+                ident: Ident::new(&ph_string, Span::call_site()),
+                colon_token: node.colon_token,
+                ty: node.ty.clone(),
+                eq_token: node.eq_token,
+                expr: node.expr.clone(),
+                semi_token: node.semi_token,
+            };
+        }
+
+        visit_mut::visit_item_const_mut(self, node);
     }
 }
 
