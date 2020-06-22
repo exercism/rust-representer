@@ -1,10 +1,10 @@
+use proc_macro2::{Ident, Span, TokenStream};
 use quote::quote;
-use syn::PatIdent;
-use proc_macro2::{Ident, Span};
 use syn::visit_mut::{self, VisitMut};
+use syn::PatIdent;
 
-use std::collections::HashMap;
 use std::collections::hash_map::Entry;
+use std::collections::HashMap;
 
 const PLACEHOLDER: &str = "PLACEHOLDER_";
 
@@ -46,11 +46,10 @@ impl VisitMut for IdentVisitor {
     }
 }
 
-pub fn replace(src: &str) -> Result<(), Box<dyn std::error::Error>> {
+pub fn replace(src: &str) -> Result<TokenStream, Box<dyn std::error::Error>> {
     let mut syntax_tree: syn::File = syn::parse_file(&src)?;
     let mut visitor = IdentVisitor::new();
     visitor.visit_file_mut(&mut syntax_tree);
-    println!("{}", quote!(#syntax_tree));
 
-    Ok(())
+    Ok(quote!(#syntax_tree))
 }

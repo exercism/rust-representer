@@ -1,3 +1,3 @@
 # Rust Representer 
 
-A normalizing representer for exercism.io exercises that are written in Rust. 
+A normalizing representer for Exercism's Rust track.
