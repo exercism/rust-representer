@@ -77,3 +77,25 @@ fn test_static_names() -> Result<(), Box<dyn Error>> {
 
     Ok(())
 }
+
+#[test]
+fn test_union_names() -> Result<(), Box<dyn Error>> {
+    let input = include_str!("test_input/union_names.rs");
+    let expected = include_str!("expected_output/union_names.rs");
+
+    let replaced = representer::replace(&input)?;
+    assert_eq!(replaced.to_string(), expected);
+
+    Ok(())
+}
+
+#[test]
+fn test_type_aliases() -> Result<(), Box<dyn Error>> {
+    let input = include_str!("test_input/type_aliases.rs");
+    let expected = include_str!("expected_output/type_aliases.rs");
+
+    let replaced = representer::replace(&input)?;
+    assert_eq!(replaced.to_string(), expected);
+
+    Ok(())
+}

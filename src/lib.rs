@@ -4,7 +4,7 @@ extern crate lazy_static;
 use proc_macro2::{Ident, Span, TokenStream};
 use quote::quote;
 use syn::visit_mut::VisitMut;
-use syn::{ItemConst, ItemEnum, ItemStatic, ItemStruct, PatIdent, Signature};
+use syn::{ItemType, ItemUnion, ItemConst, ItemEnum, ItemStatic, ItemStruct, PatIdent, Signature};
 
 use std::collections::hash_map::Entry;
 use std::collections::HashMap;
@@ -105,6 +105,26 @@ impl VisitMut for IdentVisitor {
 
            node.ident = Ident::new(&identifier, Span::call_site());
        }
+    }
+
+    fn visit_item_union_mut(&mut self, node: &mut ItemUnion) {
+        let ident_string = node.ident.to_string();
+
+        if !KEYWORDS.contains::<str>(&ident_string) {
+            let identifier = self.get_mapping(ident_string);
+
+            node.ident = Ident::new(&identifier, Span::call_site());
+        }
+    }
+
+    fn visit_item_type_mut(&mut self, node: &mut ItemType) {
+        let ident_string = node.ident.to_string();
+
+        if !KEYWORDS.contains::<str>(&ident_string) {
+            let identifier = self.get_mapping(ident_string);
+
+            node.ident = Ident::new(&identifier, Span::call_site());
+        }
     }
 }
 

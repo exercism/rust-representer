@@ -1,0 +1,1 @@
+type PLACEHOLDER_1 = u64 ; type PLACEHOLDER_2 < T > = std :: result :: Result < T , std :: error :: Error > ;
