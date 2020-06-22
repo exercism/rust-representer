@@ -4,7 +4,7 @@ extern crate lazy_static;
 use proc_macro2::{Ident, Span, TokenStream};
 use quote::quote;
 use syn::visit_mut::VisitMut;
-use syn::{ItemType, ItemUnion, ItemConst, ItemEnum, ItemStatic, ItemStruct, PatIdent, Signature};
+use syn::{ItemConst, ItemEnum, ItemStatic, ItemStruct, ItemType, ItemUnion, PatIdent, Signature};
 
 use std::collections::hash_map::Entry;
 use std::collections::HashMap;
@@ -18,6 +18,91 @@ lazy_static! {
         s.insert("main");
         s
     };
+}
+
+pub trait ReplaceIdentifier {
+    fn ident_string(&self) -> String;
+    fn set_ident(&mut self, ident: String);
+}
+
+impl ReplaceIdentifier for PatIdent {
+    fn ident_string(&self) -> String {
+        self.ident.to_string()
+    }
+
+    fn set_ident(&mut self, ident: String) {
+        self.ident = Ident::new(&ident, Span::call_site());
+    }
+}
+
+impl ReplaceIdentifier for ItemStruct {
+    fn ident_string(&self) -> String {
+        self.ident.to_string()
+    }
+
+    fn set_ident(&mut self, ident: String) {
+        self.ident = Ident::new(&ident, Span::call_site());
+    }
+}
+
+impl ReplaceIdentifier for ItemEnum {
+    fn ident_string(&self) -> String {
+        self.ident.to_string()
+    }
+
+    fn set_ident(&mut self, ident: String) {
+        self.ident = Ident::new(&ident, Span::call_site());
+    }
+}
+
+impl ReplaceIdentifier for Signature {
+    fn ident_string(&self) -> String {
+        self.ident.to_string()
+    }
+
+    fn set_ident(&mut self, ident: String) {
+        self.ident = Ident::new(&ident, Span::call_site());
+    }
+}
+
+impl ReplaceIdentifier for ItemConst {
+    fn ident_string(&self) -> String {
+        self.ident.to_string()
+    }
+
+    fn set_ident(&mut self, ident: String) {
+        self.ident = Ident::new(&ident, Span::call_site());
+    }
+}
+
+impl ReplaceIdentifier for ItemStatic {
+    fn ident_string(&self) -> String {
+        self.ident.to_string()
+    }
+
+    fn set_ident(&mut self, ident: String) {
+        self.ident = Ident::new(&ident, Span::call_site());
+    }
+}
+
+impl ReplaceIdentifier for ItemUnion {
+    fn ident_string(&self) -> String {
+        self.ident.to_string()
+    }
+
+    fn set_ident(&mut self, ident: String) {
+        self.ident = Ident::new(&ident, Span::call_site());
+    }
+}
+
+impl ReplaceIdentifier for ItemType {
+    fn ident_string(&self) -> String {
+        self.ident.to_string()
+    }
+
+    fn set_ident(&mut self, ident: String) {
+        self.ident = Ident::new(&ident, Span::call_site());
+    }
 }
 
 pub struct IdentVisitor {
@@ -44,87 +129,49 @@ impl IdentVisitor {
 
         format!("{}{}", PLACEHOLDER, uid)
     }
+
+    pub fn visit_node<Node: ReplaceIdentifier>(&mut self, node: &mut Node) {
+        let ident_string = node.ident_string();
+
+        if !KEYWORDS.contains::<str>(&ident_string) {
+            let identifier = self.get_mapping(ident_string);
+
+            node.set_ident(identifier);
+        }
+    }
 }
 
 impl VisitMut for IdentVisitor {
     fn visit_pat_ident_mut(&mut self, node: &mut PatIdent) {
-        let ident_string = node.ident.to_string();
-
-        if !KEYWORDS.contains::<str>(&ident_string) {
-            let identifier = self.get_mapping(ident_string);
-
-            node.ident = Ident::new(&identifier, Span::call_site());
-        }
+        self.visit_node(node);
     }
 
     fn visit_item_struct_mut(&mut self, node: &mut ItemStruct) {
-        let ident_string = node.ident.to_string();
-
-        if !KEYWORDS.contains::<str>(&ident_string) {
-            let identifier = self.get_mapping(ident_string);
-
-            node.ident = Ident::new(&identifier, Span::call_site());
-        }
+        self.visit_node(node);
     }
 
     fn visit_item_enum_mut(&mut self, node: &mut ItemEnum) {
-        let ident_string = node.ident.to_string();
-
-        if !KEYWORDS.contains::<str>(&ident_string) {
-            let identifier = self.get_mapping(ident_string);
-
-            node.ident = Ident::new(&identifier, Span::call_site());
-        }
+        self.visit_node(node);
     }
 
     fn visit_signature_mut(&mut self, node: &mut Signature) {
-        let ident_string = node.ident.to_string();
-
-        if !KEYWORDS.contains::<str>(&ident_string) {
-            let identifier = self.get_mapping(ident_string);
-
-            node.ident = Ident::new(&identifier, Span::call_site());
-        }
+        self.visit_node(node);
     }
 
     fn visit_item_const_mut(&mut self, node: &mut ItemConst) {
-        let ident_string = node.ident.to_string();
-
-        if !KEYWORDS.contains::<str>(&ident_string) {
-            let identifier = self.get_mapping(ident_string);
-
-            node.ident = Ident::new(&identifier, Span::call_site());
-        }
+        self.visit_node(node);
     }
 
     fn visit_item_static_mut(&mut self, node: &mut ItemStatic) {
-       let ident_string = node.ident.to_string();
-
-       if !KEYWORDS.contains::<str>(&ident_string) {
-           let identifier = self.get_mapping(ident_string);
-
-           node.ident = Ident::new(&identifier, Span::call_site());
-       }
+        self.visit_node(node);
     }
 
     fn visit_item_union_mut(&mut self, node: &mut ItemUnion) {
-        let ident_string = node.ident.to_string();
-
-        if !KEYWORDS.contains::<str>(&ident_string) {
-            let identifier = self.get_mapping(ident_string);
-
-            node.ident = Ident::new(&identifier, Span::call_site());
-        }
+        self.visit_node(node);
     }
 
     fn visit_item_type_mut(&mut self, node: &mut ItemType) {
-        let ident_string = node.ident.to_string();
-
-        if !KEYWORDS.contains::<str>(&ident_string) {
-            let identifier = self.get_mapping(ident_string);
-
-            node.ident = Ident::new(&identifier, Span::call_site());
-        }
+        self.visit_node(node);
     }
 }
 
