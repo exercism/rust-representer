@@ -6,7 +6,7 @@ use quote::quote;
 use syn::visit_mut::VisitMut;
 use syn::{
     Arm, Expr, ExprMatch, ExprPath, FnArg, ItemConst, ItemEnum, ItemStatic, ItemStruct, ItemType,
-    ItemUnion, Pat, PatIdent, PatTuple, PatType, Path, PathSegment, Signature,
+    ItemUnion, Macro, Pat, PatIdent, PatTuple, PatType, Path, PathSegment, Signature,
 };
 
 use std::collections::hash_map::Entry;
@@ -200,7 +200,7 @@ impl VisitMut for IdentVisitor {
             Pat::Ident(pat_ident) => self.visit_pat_ident_mut(pat_ident),
             Pat::Tuple(pat_tuple) => self.visit_pat_tuple_mut(pat_tuple),
             Pat::TupleStruct(pat_tuple_struct) => self.visit_pat_tuple_struct_mut(pat_tuple_struct),
-            _ => {},
+            _ => {}
         }
     }
 
@@ -218,6 +218,7 @@ impl VisitMut for IdentVisitor {
         match node {
             Expr::Match(expr_match) => self.visit_expr_match_mut(expr_match),
             Expr::Path(expr_path) => self.visit_expr_path_mut(expr_path),
+            Expr::Macro(expr_macro) => self.visit_macro_mut(&mut expr_macro.mac),
             _ => {}
         }
     }
@@ -255,9 +256,20 @@ impl VisitMut for IdentVisitor {
     }
 
     fn visit_arm_mut(&mut self, node: &mut Arm) {
+        // visit `Arm`'s expression
         self.visit_pat_mut(&mut node.pat);
-        // TODO: visit the arm's `guard`
-        // TODO: visit the arm's `body`
+
+        // visit `Arm`'s guard if it exists
+        if let Some((_, expr)) = &mut node.guard {
+            self.visit_expr_mut(expr);
+        }
+
+        // visit `Arm`'s body
+        self.visit_expr_mut(&mut node.body);
+    }
+
+    fn visit_macro_mut(&mut self, node: &mut Macro) {
+        unimplemented!();
     }
 }
 
