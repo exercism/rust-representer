@@ -46,9 +46,9 @@ fn test_enum_names() -> Result<(), Box<dyn Error>> {
 }
 
 #[test]
-fn test_fn_signatures() -> Result<(), Box<dyn Error>> {
-    let input = include_str!("test_input/fn_signatures.rs");
-    let expected = include_str!("expected_output/fn_signatures.rs");
+fn test_fn_names() -> Result<(), Box<dyn Error>> {
+    let input = include_str!("test_input/fn_names.rs");
+    let expected = include_str!("expected_output/fn_names.rs");
 
     let replaced = representer::replace(&input)?;
     assert_eq!(replaced.to_string(), expected);
@@ -93,6 +93,17 @@ fn test_union_names() -> Result<(), Box<dyn Error>> {
 fn test_type_aliases() -> Result<(), Box<dyn Error>> {
     let input = include_str!("test_input/type_aliases.rs");
     let expected = include_str!("expected_output/type_aliases.rs");
+
+    let replaced = representer::replace(&input)?;
+    assert_eq!(replaced.to_string(), expected);
+
+    Ok(())
+}
+
+#[test]
+fn test_fn_args() -> Result<(), Box<dyn Error>> {
+    let input = include_str!("test_input/fn_args.rs");
+    let expected = include_str!("expected_output/fn_args.rs");
 
     let replaced = representer::replace(&input)?;
     assert_eq!(replaced.to_string(), expected);
