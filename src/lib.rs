@@ -4,7 +4,7 @@ extern crate lazy_static;
 use proc_macro2::{Ident, Span, TokenStream};
 use quote::quote;
 use syn::visit_mut::VisitMut;
-use syn::{ItemConst, ItemEnum, ItemStatic, ItemStruct, ItemType, ItemUnion, PatIdent, Signature};
+use syn::{FnArg, ItemConst, ItemEnum, ItemStatic, ItemStruct, ItemType, ItemUnion, Pat, PatIdent, PatType, Signature};
 
 use std::collections::hash_map::Entry;
 use std::collections::HashMap;
@@ -155,7 +155,13 @@ impl VisitMut for IdentVisitor {
     }
 
     fn visit_signature_mut(&mut self, node: &mut Signature) {
+        // handle Signature's identifier
         self.visit_node(node);
+
+        // handle Signature's inputs, i.e. the function's arguments
+        for node in node.inputs.iter_mut() {
+            self.visit_fn_arg_mut(node);
+        }
     }
 
     fn visit_item_const_mut(&mut self, node: &mut ItemConst) {
@@ -172,6 +178,22 @@ impl VisitMut for IdentVisitor {
 
     fn visit_item_type_mut(&mut self, node: &mut ItemType) {
         self.visit_node(node);
+    }
+
+    fn visit_pat_mut(&mut self, node: &mut Pat) {
+        if let Pat::Ident(pat_ident) = node {
+            self.visit_pat_ident_mut(pat_ident);
+        }
+    }
+
+    fn visit_pat_type_mut(&mut self, node: &mut PatType) {
+        self.visit_pat_mut(&mut *node.pat);
+    }
+
+    fn visit_fn_arg_mut(&mut self, node: &mut FnArg) {
+        if let FnArg::Typed(pat_type) = node {
+            self.visit_pat_type_mut(pat_type);
+        }
     }
 }
 
