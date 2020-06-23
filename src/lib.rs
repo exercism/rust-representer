@@ -5,8 +5,8 @@ use proc_macro2::{Ident, Span, TokenStream};
 use quote::quote;
 use syn::visit_mut::VisitMut;
 use syn::{
-    Expr, ExprMatch, ExprPath, FnArg, ItemConst, ItemEnum, ItemStatic, ItemStruct, ItemType,
-    ItemUnion, Pat, PatIdent, PatType, Path, PathSegment, Signature,
+    Arm, Expr, ExprMatch, ExprPath, FnArg, ItemConst, ItemEnum, ItemStatic, ItemStruct, ItemType,
+    ItemUnion, Pat, PatIdent, PatTuple, PatType, Path, PathSegment, Signature,
 };
 
 use std::collections::hash_map::Entry;
@@ -19,6 +19,8 @@ lazy_static! {
     static ref KEYWORDS: HashSet<&'static str> = {
         let mut s = HashSet::new();
         s.insert("main");
+        s.insert("Some");
+        s.insert("None");
         s
     };
 }
@@ -194,8 +196,11 @@ impl VisitMut for IdentVisitor {
     }
 
     fn visit_pat_mut(&mut self, node: &mut Pat) {
-        if let Pat::Ident(pat_ident) = node {
-            self.visit_pat_ident_mut(pat_ident);
+        match node {
+            Pat::Ident(pat_ident) => self.visit_pat_ident_mut(pat_ident),
+            Pat::Tuple(pat_tuple) => self.visit_pat_tuple_mut(pat_tuple),
+            Pat::TupleStruct(pat_tuple_struct) => self.visit_pat_tuple_struct_mut(pat_tuple_struct),
+            _ => {},
         }
     }
 
@@ -218,7 +223,13 @@ impl VisitMut for IdentVisitor {
     }
 
     fn visit_expr_match_mut(&mut self, node: &mut ExprMatch) {
+        // visit the match expression
         self.visit_expr_mut(&mut *node.expr);
+
+        // visit the match's arms
+        for arm in node.arms.iter_mut() {
+            self.visit_arm_mut(arm);
+        }
     }
 
     fn visit_expr_path_mut(&mut self, node: &mut ExprPath) {
@@ -235,6 +246,18 @@ impl VisitMut for IdentVisitor {
 
     fn visit_path_segment_mut(&mut self, node: &mut PathSegment) {
         self.visit_node(node);
+    }
+
+    fn visit_pat_tuple_mut(&mut self, node: &mut PatTuple) {
+        for elem in node.elems.iter_mut() {
+            self.visit_pat_mut(elem);
+        }
+    }
+
+    fn visit_arm_mut(&mut self, node: &mut Arm) {
+        self.visit_pat_mut(&mut node.pat);
+        // TODO: visit the arm's `guard`
+        // TODO: visit the arm's `body`
     }
 }
 
