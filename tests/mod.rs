@@ -110,3 +110,14 @@ fn test_fn_args() -> Result<(), Box<dyn Error>> {
 
     Ok(())
 }
+
+#[test]
+fn test_match_expressions() -> Result<(), Box<dyn Error>> {
+    let input = include_str!("test_input/match_expressions.rs");
+    let expected = include_str!("expected_output/match_expressions.rs");
+
+    let replaced = representer::replace(&input)?;
+    assert_eq!(replaced.to_string(), expected);
+
+    Ok(())
+}

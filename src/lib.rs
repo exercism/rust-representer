@@ -4,7 +4,10 @@ extern crate lazy_static;
 use proc_macro2::{Ident, Span, TokenStream};
 use quote::quote;
 use syn::visit_mut::VisitMut;
-use syn::{FnArg, ItemConst, ItemEnum, ItemStatic, ItemStruct, ItemType, ItemUnion, Pat, PatIdent, PatType, Signature};
+use syn::{
+    Expr, ExprMatch, ExprPath, FnArg, ItemConst, ItemEnum, ItemStatic, ItemStruct, ItemType,
+    ItemUnion, Pat, PatIdent, PatType, Path, PathSegment, Signature,
+};
 
 use std::collections::hash_map::Entry;
 use std::collections::HashMap;
@@ -105,6 +108,16 @@ impl ReplaceIdentifier for ItemType {
     }
 }
 
+impl ReplaceIdentifier for PathSegment {
+    fn ident_string(&self) -> String {
+        self.ident.to_string()
+    }
+
+    fn set_ident(&mut self, ident: String) {
+        self.ident = Ident::new(&ident, Span::call_site());
+    }
+}
+
 pub struct IdentVisitor {
     mappings: HashMap<String, u32>,
     uid: u32,
@@ -194,6 +207,34 @@ impl VisitMut for IdentVisitor {
         if let FnArg::Typed(pat_type) = node {
             self.visit_pat_type_mut(pat_type);
         }
+    }
+
+    fn visit_expr_mut(&mut self, node: &mut Expr) {
+        match node {
+            Expr::Match(expr_match) => self.visit_expr_match_mut(expr_match),
+            Expr::Path(expr_path) => self.visit_expr_path_mut(expr_path),
+            _ => {}
+        }
+    }
+
+    fn visit_expr_match_mut(&mut self, node: &mut ExprMatch) {
+        self.visit_expr_mut(&mut *node.expr);
+    }
+
+    fn visit_expr_path_mut(&mut self, node: &mut ExprPath) {
+        self.visit_path_mut(&mut node.path);
+    }
+
+    fn visit_path_mut(&mut self, node: &mut Path) {
+        if let Some(_) = node.get_ident() {
+            // this is fine since we know `node` only contains a
+            // single PathSegment which is an identifier
+            self.visit_path_segment_mut(node.segments.first_mut().unwrap());
+        }
+    }
+
+    fn visit_path_segment_mut(&mut self, node: &mut PathSegment) {
+        self.visit_node(node);
     }
 }
 
