@@ -29,7 +29,7 @@ impl IdentVisitor {
         }
     }
 
-    pub fn get_mapping(&mut self, ident: String) -> String {
+    fn get_mapping(&mut self, ident: String) -> String {
         let uid = match self.mappings.entry(ident) {
             Entry::Occupied(o) => o.into_mut(),
             Entry::Vacant(v) => {
