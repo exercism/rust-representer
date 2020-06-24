@@ -1,7 +1,10 @@
 #[macro_use]
 extern crate lazy_static;
 
-use proc_macro2::{Ident, Span, TokenStream};
+mod ident_visitor;
+mod replace_identifier;
+
+use proc_macro2::TokenStream;
 use quote::quote;
 use syn::punctuated::Punctuated;
 use syn::visit_mut::VisitMut;
@@ -10,152 +13,7 @@ use syn::{
     ItemUnion, Macro, Pat, PatIdent, PatTuple, PatType, Path, PathSegment, Signature, Token,
 };
 
-use std::collections::hash_map::Entry;
-use std::collections::HashMap;
-use std::collections::HashSet;
-
-const PLACEHOLDER: &str = "PLACEHOLDER_";
-
-lazy_static! {
-    static ref KEYWORDS: HashSet<&'static str> = {
-        let mut s = HashSet::new();
-        s.insert("main");
-        s.insert("Some");
-        s.insert("None");
-        s
-    };
-}
-
-pub trait ReplaceIdentifier {
-    fn ident_string(&self) -> String;
-    fn set_ident(&mut self, ident: String);
-}
-
-impl ReplaceIdentifier for PatIdent {
-    fn ident_string(&self) -> String {
-        self.ident.to_string()
-    }
-
-    fn set_ident(&mut self, ident: String) {
-        self.ident = Ident::new(&ident, Span::call_site());
-    }
-}
-
-impl ReplaceIdentifier for ItemStruct {
-    fn ident_string(&self) -> String {
-        self.ident.to_string()
-    }
-
-    fn set_ident(&mut self, ident: String) {
-        self.ident = Ident::new(&ident, Span::call_site());
-    }
-}
-
-impl ReplaceIdentifier for ItemEnum {
-    fn ident_string(&self) -> String {
-        self.ident.to_string()
-    }
-
-    fn set_ident(&mut self, ident: String) {
-        self.ident = Ident::new(&ident, Span::call_site());
-    }
-}
-
-impl ReplaceIdentifier for Signature {
-    fn ident_string(&self) -> String {
-        self.ident.to_string()
-    }
-
-    fn set_ident(&mut self, ident: String) {
-        self.ident = Ident::new(&ident, Span::call_site());
-    }
-}
-
-impl ReplaceIdentifier for ItemConst {
-    fn ident_string(&self) -> String {
-        self.ident.to_string()
-    }
-
-    fn set_ident(&mut self, ident: String) {
-        self.ident = Ident::new(&ident, Span::call_site());
-    }
-}
-
-impl ReplaceIdentifier for ItemStatic {
-    fn ident_string(&self) -> String {
-        self.ident.to_string()
-    }
-
-    fn set_ident(&mut self, ident: String) {
-        self.ident = Ident::new(&ident, Span::call_site());
-    }
-}
-
-impl ReplaceIdentifier for ItemUnion {
-    fn ident_string(&self) -> String {
-        self.ident.to_string()
-    }
-
-    fn set_ident(&mut self, ident: String) {
-        self.ident = Ident::new(&ident, Span::call_site());
-    }
-}
-
-impl ReplaceIdentifier for ItemType {
-    fn ident_string(&self) -> String {
-        self.ident.to_string()
-    }
-
-    fn set_ident(&mut self, ident: String) {
-        self.ident = Ident::new(&ident, Span::call_site());
-    }
-}
-
-impl ReplaceIdentifier for PathSegment {
-    fn ident_string(&self) -> String {
-        self.ident.to_string()
-    }
-
-    fn set_ident(&mut self, ident: String) {
-        self.ident = Ident::new(&ident, Span::call_site());
-    }
-}
-
-pub struct IdentVisitor {
-    mappings: HashMap<String, u32>,
-    uid: u32,
-}
-
-impl IdentVisitor {
-    pub fn new() -> Self {
-        IdentVisitor {
-            mappings: HashMap::new(),
-            uid: 0,
-        }
-    }
-
-    pub fn get_mapping(&mut self, ident: String) -> String {
-        let uid = match self.mappings.entry(ident) {
-            Entry::Occupied(o) => o.into_mut(),
-            Entry::Vacant(v) => {
-                self.uid += 1;
-                v.insert(self.uid)
-            }
-        };
-
-        format!("{}{}", PLACEHOLDER, uid)
-    }
-
-    pub fn visit_node<Node: ReplaceIdentifier>(&mut self, node: &mut Node) {
-        let ident_string = node.ident_string();
-
-        if !KEYWORDS.contains::<str>(&ident_string) {
-            let identifier = self.get_mapping(ident_string);
-
-            node.set_ident(identifier);
-        }
-    }
-}
+use ident_visitor::IdentVisitor;
 
 impl VisitMut for IdentVisitor {
     fn visit_pat_ident_mut(&mut self, node: &mut PatIdent) {
