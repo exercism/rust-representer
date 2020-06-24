@@ -1,12 +1,15 @@
 #[macro_use]
 extern crate lazy_static;
+// extern crate proc_macro;
 
+// use proc_macro::TokenStream;
 use proc_macro2::{Ident, Span, TokenStream};
 use quote::quote;
+use syn::punctuated::Punctuated;
 use syn::visit_mut::VisitMut;
 use syn::{
     Arm, Expr, ExprMatch, ExprPath, FnArg, ItemConst, ItemEnum, ItemStatic, ItemStruct, ItemType,
-    ItemUnion, Macro, Pat, PatIdent, PatTuple, PatType, Path, PathSegment, Signature,
+    ItemUnion, Macro, Pat, PatIdent, PatTuple, PatType, Path, PathSegment, Signature, Token,
 };
 
 use std::collections::hash_map::Entry;
@@ -269,7 +272,15 @@ impl VisitMut for IdentVisitor {
     }
 
     fn visit_macro_mut(&mut self, node: &mut Macro) {
-        unimplemented!();
+        let parser = Punctuated::<Expr, Token![,]>::parse_terminated;
+
+        if let Ok(ref mut body) = node.parse_body_with(parser) {
+            for p in body.iter_mut() {
+                self.visit_expr_mut(p);
+            }
+
+            node.tokens = quote!(#body);
+        }
     }
 }
 
