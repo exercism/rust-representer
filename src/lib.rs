@@ -1,8 +1,6 @@
 #[macro_use]
 extern crate lazy_static;
-// extern crate proc_macro;
 
-// use proc_macro::TokenStream;
 use proc_macro2::{Ident, Span, TokenStream};
 use quote::quote;
 use syn::punctuated::Punctuated;

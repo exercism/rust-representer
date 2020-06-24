@@ -121,3 +121,25 @@ fn test_match_expressions() -> Result<(), Box<dyn Error>> {
 
     Ok(())
 }
+
+#[test]
+fn test_match_arms() -> Result<(), Box<dyn Error>> {
+    let input = include_str!("test_input/match_arms.rs");
+    let expected = include_str!("expected_output/match_arms.rs");
+
+    let replaced = representer::replace(&input)?;
+    assert_eq!(replaced.to_string(), expected);
+
+    Ok(())
+}
+
+#[test]
+fn test_macro_inputs() -> Result<(), Box<dyn Error>> {
+    let input = include_str!("test_input/macro_inputs.rs");
+    let expected = include_str!("expected_output/macro_inputs.rs");
+
+    let replaced = representer::replace(&input)?;
+    assert_eq!(replaced.to_string(), expected);
+
+    Ok(())
+}
