@@ -143,3 +143,14 @@ fn test_macro_inputs() -> Result<(), Box<dyn Error>> {
 
     Ok(())
 }
+
+#[test]
+fn test_fn_calls() -> Result<(), Box<dyn Error>> {
+    let input = include_str!("test_input/fn_calls.rs");
+    let expected = include_str!("expected_output/fn_calls.rs");
+
+    let replaced = representer::replace(&input)?;
+    assert_eq!(replaced.to_string(), expected);
+
+    Ok(())
+}

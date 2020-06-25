@@ -1,0 +1,1 @@
+fn main ( ) { let PLACEHOLDER_1 = 5 ; println ! ( "{}" , square ( PLACEHOLDER_1 ) ) }
