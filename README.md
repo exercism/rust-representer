@@ -39,11 +39,11 @@ Currently the following statements/expression types are visited by the represent
 
 - [x] `let` bindings
 - [x] `struct` names 
-- [] `struct` fields
+- [ ] `struct` fields
 - [x] `enum` names 
-- [] `enum` variants
+- [ ] `enum` variants
 - [x] `fn` definitions
-- [] `fn` calls
+- [ ] `fn` calls
 - [x] `const` names 
 - [x] `static` names
 - [x] `union` names
@@ -51,9 +51,9 @@ Currently the following statements/expression types are visited by the represent
 - [x] `match` expressions
 - [x] `match` arms
 - [x] `macro` arguments
-- [] closure expressions
-- [] loop expressions
-- [] tuple expressions
+- [ ] closure expressions
+- [ ] loop expressions
+- [ ] tuple expressions
 
 ## Design
 
