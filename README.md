@@ -4,7 +4,7 @@ A normalizing representer for Exercism's Rust track.
 
 ## What's a Normalizing Representer?
 
-A representer's job is to normalize some input code by stripping out and replacing any trivial details that introduce differences between students' submitted code. Things such as comments, whitespace, and variable names, things that don't contribute to the overall logical flow and structure of the students' approach, are stripped out. In the case of variable names, these are replaced by a standard placeholder.
+A representer's job is to normalize some input code by stripping out and replacing any trivial details that introduce differences between students' submitted code. Comments, whitespace, and variable names, things that don't contribute to the overall logical flow and structure of the students' approach, are stripped out. In the case of variable names, these are replaced by a standard placeholder.
 
 ## Example
 
