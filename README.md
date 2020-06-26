@@ -8,7 +8,7 @@ A representer's job is to normalize some input code by stripping out and replaci
 
 ## Example
 
-Given an example student submission for the `two-fer` exercise like the following:
+Given an example submission for the `two-fer` exercise like the following:
 
 ```rust
 fn twofer(name: &str) -> String {
@@ -43,7 +43,7 @@ Currently the following statements/expression types are visited by the represent
 - [x] `enum` names 
 - [ ] `enum` variants
 - [x] `fn` definitions
-- [ ] `fn` calls
+- [x] `fn` calls
 - [x] `const` names 
 - [x] `static` names
 - [x] `union` names

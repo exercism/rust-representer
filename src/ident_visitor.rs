@@ -16,8 +16,9 @@ lazy_static! {
     };
 }
 
+#[derive(Debug)]
 pub struct IdentVisitor {
-    mappings: HashMap<String, u32>,
+    pub mappings: HashMap<String, u32>,
     uid: u32,
 }
 

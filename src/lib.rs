@@ -9,7 +9,7 @@ use quote::quote;
 use syn::punctuated::Punctuated;
 use syn::visit_mut::VisitMut;
 use syn::{
-    Arm, Expr, ExprMatch, ExprPath, FnArg, ItemConst, ItemEnum, ItemStatic, ItemStruct, ItemType,
+    Arm, Expr, ExprCall, ExprMatch, ExprPath, FnArg, ItemConst, ItemEnum, ItemStatic, ItemStruct, ItemType,
     ItemUnion, Macro, Pat, PatIdent, PatTuple, PatType, Path, PathSegment, Signature, Token,
 };
 
@@ -78,6 +78,7 @@ impl VisitMut for IdentVisitor {
             Expr::Match(expr_match) => self.visit_expr_match_mut(expr_match),
             Expr::Path(expr_path) => self.visit_expr_path_mut(expr_path),
             Expr::Macro(expr_macro) => self.visit_macro_mut(&mut expr_macro.mac),
+            Expr::Call(expr_call) => self.visit_expr_call_mut(expr_call),
             _ => {}
         }
     }
@@ -94,6 +95,14 @@ impl VisitMut for IdentVisitor {
 
     fn visit_expr_path_mut(&mut self, node: &mut ExprPath) {
         self.visit_path_mut(&mut node.path);
+    }
+
+    fn visit_expr_call_mut(&mut self, node: &mut ExprCall) {
+        self.visit_expr_mut(&mut *node.func);
+
+        for arg in node.args.iter_mut() {
+            self.visit_expr_mut(arg);
+        }
     }
 
     fn visit_path_mut(&mut self, node: &mut Path) {
