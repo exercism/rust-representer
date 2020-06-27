@@ -44,6 +44,7 @@ Currently the following statements/expression types are visited by the represent
 - [ ] `enum` variants
 - [x] `fn` definitions
 - [x] `fn` calls
+- [ ] method calls
 - [x] `const` names 
 - [x] `static` names
 - [x] `union` names
@@ -51,7 +52,7 @@ Currently the following statements/expression types are visited by the represent
 - [x] `match` expressions
 - [x] `match` arms
 - [x] `macro` arguments
-- [ ] closure expressions
+- [x] closure expressions
 - [ ] loop expressions
 - [ ] tuple expressions
 

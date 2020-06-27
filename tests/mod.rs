@@ -154,3 +154,25 @@ fn test_fn_calls() -> Result<(), Box<dyn Error>> {
 
     Ok(())
 }
+
+#[test]
+fn test_closure_expressions() -> Result<(), Box<dyn Error>> {
+    let input = include_str!("test_input/closure_expressions.rs");
+    let expected = include_str!("expected_output/closure_expressions.rs");
+
+    let replaced = representer::replace(&input)?;
+    assert_eq!(replaced.to_string(), expected);
+
+    Ok(())
+}
+
+#[test]
+fn test_blocks() -> Result<(), Box<dyn Error>> {
+    let input = include_str!("test_input/blocks.rs");
+    let expected = include_str!("expected_output/blocks.rs");
+
+    let replaced = representer::replace(&input)?;
+    assert_eq!(replaced.to_string(), expected);
+
+    Ok(())
+}

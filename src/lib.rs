@@ -9,8 +9,9 @@ use quote::quote;
 use syn::punctuated::Punctuated;
 use syn::visit_mut::VisitMut;
 use syn::{
-    Arm, Expr, ExprCall, ExprMatch, ExprPath, FnArg, ItemConst, ItemEnum, ItemStatic, ItemStruct, ItemType,
-    ItemUnion, Macro, Pat, PatIdent, PatTuple, PatType, Path, PathSegment, Signature, Token,
+    Arm, Expr, ExprBinary, ExprCall, ExprClosure, ExprMatch, ExprPath, FnArg, ItemConst, ItemEnum,
+    ItemStatic, ItemStruct, ItemType, ItemUnion, Macro, Pat, PatIdent, PatTuple, PatType, Path,
+    PathSegment, Signature, Token,
 };
 
 use ident_visitor::IdentVisitor;
@@ -79,8 +80,16 @@ impl VisitMut for IdentVisitor {
             Expr::Path(expr_path) => self.visit_expr_path_mut(expr_path),
             Expr::Macro(expr_macro) => self.visit_macro_mut(&mut expr_macro.mac),
             Expr::Call(expr_call) => self.visit_expr_call_mut(expr_call),
+            Expr::Closure(expr_closure) => self.visit_expr_closure_mut(expr_closure),
+            Expr::Binary(expr_binary) => self.visit_expr_binary_mut(expr_binary),
+            Expr::Block(expr_block) => self.visit_expr_block_mut(expr_block),
             _ => {}
         }
+    }
+
+    fn visit_expr_binary_mut(&mut self, node: &mut ExprBinary) {
+        self.visit_expr_mut(&mut *node.left);
+        self.visit_expr_mut(&mut *node.right);
     }
 
     fn visit_expr_match_mut(&mut self, node: &mut ExprMatch) {
@@ -103,6 +112,14 @@ impl VisitMut for IdentVisitor {
         for arg in node.args.iter_mut() {
             self.visit_expr_mut(arg);
         }
+    }
+
+    fn visit_expr_closure_mut(&mut self, node: &mut ExprClosure) {
+        for input in node.inputs.iter_mut() {
+            self.visit_pat_mut(input);
+        }
+
+        self.visit_expr_mut(&mut *node.body);
     }
 
     fn visit_path_mut(&mut self, node: &mut Path) {
