@@ -1,3 +1,4 @@
-pub struct Foo < A > {
-    x : A 
+pub struct Foo {
+    x : A,
+    y : B, 
 }

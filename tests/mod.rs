@@ -35,7 +35,6 @@ fn test_struct_names() -> Result<(), Box<dyn Error>> {
 }
 
 #[test]
-#[ignore]
 fn test_struct_fields() -> Result<(), Box<dyn Error>> {
     let input = include_str!("test_input/struct_fields.rs");
     let expected = include_str!("expected_output/struct_fields.rs");

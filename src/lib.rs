@@ -22,7 +22,13 @@ impl VisitMut for IdentVisitor {
     }
 
     fn visit_item_struct_mut(&mut self, node: &mut ItemStruct) {
+        // visit struct's identifier
         self.visit_node(node);
+
+        // visit struct's fields
+        for field in node.fields.iter_mut() {
+            self.visit_field_mut(field);
+        }
     }
 
     fn visit_item_enum_mut(&mut self, node: &mut ItemEnum) {
