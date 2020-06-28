@@ -41,7 +41,7 @@ Currently the following statements/expression types are visited by the represent
 - [x] `struct` names 
 - [ ] `struct` fields
 - [x] `enum` names 
-- [ ] `enum` variants
+- [x] `enum` variants
 - [x] `fn` definitions
 - [x] `fn` calls
 - [ ] method calls
