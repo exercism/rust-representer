@@ -9,9 +9,9 @@ use quote::quote;
 use syn::punctuated::Punctuated;
 use syn::visit_mut::VisitMut;
 use syn::{
-    Arm, Expr, ExprBinary, ExprCall, ExprClosure, ExprField, ExprMatch, ExprPath, Field, Fields, FnArg, ItemConst, ItemEnum,
-    ItemStatic, ItemStruct, ItemType, ItemUnion, Macro, Pat, PatIdent, PatTuple, PatType, Path,
-    PathSegment, Signature, Token, Type, Variant,
+    Arm, Expr, ExprBinary, ExprCall, ExprClosure, ExprField, ExprMatch, ExprPath, Field, Fields,
+    FnArg, ItemConst, ItemEnum, ItemStatic, ItemStruct, ItemType, ItemUnion, Macro, Pat, PatIdent,
+    PatTuple, PatType, Path, PathSegment, Signature, Token, Type, Variant,
 };
 
 use ident_visitor::IdentVisitor;
@@ -28,7 +28,7 @@ impl VisitMut for IdentVisitor {
     fn visit_item_enum_mut(&mut self, node: &mut ItemEnum) {
         // visit enum's identifier
         self.visit_node(node);
-        
+
         // visit enum's variants
         for variant in node.variants.iter_mut() {
             self.visit_variant_mut(variant);
@@ -80,13 +80,13 @@ impl VisitMut for IdentVisitor {
                 for field in fields.named.iter_mut() {
                     self.visit_field_mut(field);
                 }
-            },
+            }
             Fields::Unnamed(fields) => {
                 for field in fields.unnamed.iter_mut() {
                     self.visit_field_mut(field);
                 }
-            },
-            _ => {},
+            }
+            _ => {}
         }
     }
 
@@ -112,7 +112,7 @@ impl VisitMut for IdentVisitor {
         use Type::*;
         match node {
             Path(type_path) => self.visit_path_mut(&mut type_path.path),
-            _ => {},
+            _ => {}
         }
     }
 

@@ -56,9 +56,9 @@ impl IdentVisitor {
         if let Some(ident_string) = node.ident_string() {
             if !KEYWORDS.contains::<str>(&ident_string) {
                 let identifier = self.get_mapping(ident_string);
-    
+
                 node.set_ident(identifier);
-            } 
+            }
         }
     }
 }
