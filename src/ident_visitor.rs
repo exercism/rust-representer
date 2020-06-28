@@ -51,4 +51,14 @@ impl IdentVisitor {
             node.set_ident(identifier);
         }
     }
+
+    pub fn visit_node_maybe<Node: ReplaceIdentifierMaybe>(&mut self, node: &mut Node) {
+        if let Some(ident_string) = node.ident_string() {
+            if !KEYWORDS.contains::<str>(&ident_string) {
+                let identifier = self.get_mapping(ident_string);
+    
+                node.set_ident(identifier);
+            } 
+        }
+    }
 }

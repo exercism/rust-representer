@@ -1,0 +1,1 @@
+pub struct PLACEHOLDER_1 < A > { PLACEHOLDER_2 : A }

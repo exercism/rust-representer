@@ -1,4 +1,2 @@
-pub enum Bar<A, B> {
-    A(A),
-    B(B),
-}
+enum FirstEnum {} 
+pub enum SecondEnum {}

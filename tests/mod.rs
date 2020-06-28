@@ -35,9 +35,32 @@ fn test_struct_names() -> Result<(), Box<dyn Error>> {
 }
 
 #[test]
+#[ignore]
+fn test_struct_fields() -> Result<(), Box<dyn Error>> {
+    let input = include_str!("test_input/struct_fields.rs");
+    let expected = include_str!("expected_output/struct_fields.rs");
+
+    let replaced = representer::replace(&input)?;
+    assert_eq!(replaced.to_string(), expected);
+
+    Ok(())
+}
+
+#[test]
 fn test_enum_names() -> Result<(), Box<dyn Error>> {
     let input = include_str!("test_input/enum_names.rs");
     let expected = include_str!("expected_output/enum_names.rs");
+
+    let replaced = representer::replace(&input)?;
+    assert_eq!(replaced.to_string(), expected);
+
+    Ok(())
+}
+
+#[test]
+fn test_enum_variants() -> Result<(), Box<dyn Error>> {
+    let input = include_str!("test_input/enum_variants.rs");
+    let expected = include_str!("expected_output/enum_variants.rs");
 
     let replaced = representer::replace(&input)?;
     assert_eq!(replaced.to_string(), expected);

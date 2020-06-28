@@ -9,9 +9,9 @@ use quote::quote;
 use syn::punctuated::Punctuated;
 use syn::visit_mut::VisitMut;
 use syn::{
-    Arm, Expr, ExprBinary, ExprCall, ExprClosure, ExprMatch, ExprPath, FnArg, ItemConst, ItemEnum,
+    Arm, Expr, ExprBinary, ExprCall, ExprClosure, ExprField, ExprMatch, ExprPath, Field, Fields, FnArg, ItemConst, ItemEnum,
     ItemStatic, ItemStruct, ItemType, ItemUnion, Macro, Pat, PatIdent, PatTuple, PatType, Path,
-    PathSegment, Signature, Token,
+    PathSegment, Signature, Token, Type, Variant,
 };
 
 use ident_visitor::IdentVisitor;
@@ -26,16 +26,12 @@ impl VisitMut for IdentVisitor {
     }
 
     fn visit_item_enum_mut(&mut self, node: &mut ItemEnum) {
+        // visit enum's identifier
         self.visit_node(node);
-    }
-
-    fn visit_signature_mut(&mut self, node: &mut Signature) {
-        // handle Signature's identifier
-        self.visit_node(node);
-
-        // handle Signature's inputs, i.e. the function's arguments
-        for node in node.inputs.iter_mut() {
-            self.visit_fn_arg_mut(node);
+        
+        // visit enum's variants
+        for variant in node.variants.iter_mut() {
+            self.visit_variant_mut(variant);
         }
     }
 
@@ -55,6 +51,50 @@ impl VisitMut for IdentVisitor {
         self.visit_node(node);
     }
 
+    fn visit_signature_mut(&mut self, node: &mut Signature) {
+        // handle Signature's identifier
+        self.visit_node(node);
+
+        // handle Signature's inputs, i.e. the function's arguments
+        for node in node.inputs.iter_mut() {
+            self.visit_fn_arg_mut(node);
+        }
+    }
+
+    fn visit_variant_mut(&mut self, node: &mut Variant) {
+        // visit Variant's identifier
+        self.visit_node(node);
+
+        // visit Variant's Fields
+        self.visit_fields_mut(&mut node.fields);
+
+        // visit Variant's discriminants
+        if let Some((_, ref mut expr)) = node.discriminant {
+            self.visit_expr_mut(expr);
+        }
+    }
+
+    fn visit_fields_mut(&mut self, node: &mut Fields) {
+        match node {
+            Fields::Named(fields) => {
+                for field in fields.named.iter_mut() {
+                    self.visit_field_mut(field);
+                }
+            },
+            Fields::Unnamed(fields) => {
+                for field in fields.unnamed.iter_mut() {
+                    self.visit_field_mut(field);
+                }
+            },
+            _ => {},
+        }
+    }
+
+    fn visit_field_mut(&mut self, node: &mut Field) {
+        self.visit_node_maybe(node);
+        self.visit_type_mut(&mut node.ty);
+    }
+
     fn visit_pat_mut(&mut self, node: &mut Pat) {
         match node {
             Pat::Ident(pat_ident) => self.visit_pat_ident_mut(pat_ident),
@@ -68,6 +108,14 @@ impl VisitMut for IdentVisitor {
         self.visit_pat_mut(&mut *node.pat);
     }
 
+    fn visit_type_mut(&mut self, node: &mut Type) {
+        use Type::*;
+        match node {
+            Path(type_path) => self.visit_path_mut(&mut type_path.path),
+            _ => {},
+        }
+    }
+
     fn visit_fn_arg_mut(&mut self, node: &mut FnArg) {
         if let FnArg::Typed(pat_type) = node {
             self.visit_pat_type_mut(pat_type);
@@ -75,14 +123,16 @@ impl VisitMut for IdentVisitor {
     }
 
     fn visit_expr_mut(&mut self, node: &mut Expr) {
+        use Expr::*;
         match node {
-            Expr::Match(expr_match) => self.visit_expr_match_mut(expr_match),
-            Expr::Path(expr_path) => self.visit_expr_path_mut(expr_path),
-            Expr::Macro(expr_macro) => self.visit_macro_mut(&mut expr_macro.mac),
-            Expr::Call(expr_call) => self.visit_expr_call_mut(expr_call),
-            Expr::Closure(expr_closure) => self.visit_expr_closure_mut(expr_closure),
-            Expr::Binary(expr_binary) => self.visit_expr_binary_mut(expr_binary),
-            Expr::Block(expr_block) => self.visit_expr_block_mut(expr_block),
+            Match(expr_match) => self.visit_expr_match_mut(expr_match),
+            Path(expr_path) => self.visit_expr_path_mut(expr_path),
+            Macro(expr_macro) => self.visit_macro_mut(&mut expr_macro.mac),
+            Call(expr_call) => self.visit_expr_call_mut(expr_call),
+            Closure(expr_closure) => self.visit_expr_closure_mut(expr_closure),
+            Binary(expr_binary) => self.visit_expr_binary_mut(expr_binary),
+            Block(expr_block) => self.visit_expr_block_mut(expr_block),
+            Field(expr_field) => self.visit_expr_field_mut(expr_field),
             _ => {}
         }
     }
@@ -120,6 +170,11 @@ impl VisitMut for IdentVisitor {
         }
 
         self.visit_expr_mut(&mut *node.body);
+    }
+
+    fn visit_expr_field_mut(&mut self, node: &mut ExprField) {
+        self.visit_expr_mut(&mut *node.base);
+        self.visit_member_mut(&mut node.member);
     }
 
     fn visit_path_mut(&mut self, node: &mut Path) {
