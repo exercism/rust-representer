@@ -1,1 +1,0 @@
-fn main ( ) { let PLACEHOLDER_1 = 5 ; let PLACEHOLDER_2 = 11 ; }

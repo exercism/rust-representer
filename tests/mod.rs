@@ -2,20 +2,9 @@ use std::error::Error;
 use std::include_str;
 
 #[test]
-fn test_single_let_binding() -> Result<(), Box<dyn Error>> {
-    let input = include_str!("test_input/single_let_binding.rs");
-    let expected = include_str!("expected_output/single_let_binding.rs");
-
-    let replaced = representer::replace(&input)?;
-    assert_eq!(replaced.to_string(), expected);
-
-    Ok(())
-}
-
-#[test]
-fn test_multiple_let_bindings() -> Result<(), Box<dyn Error>> {
-    let input = include_str!("test_input/multiple_let_bindings.rs");
-    let expected = include_str!("expected_output/multiple_let_bindings.rs");
+fn test_let_bindings() -> Result<(), Box<dyn Error>> {
+    let input = include_str!("test_input/let_bindings.rs");
+    let expected = include_str!("expected_output/let_bindings.rs");
 
     let replaced = representer::replace(&input)?;
     assert_eq!(replaced.to_string(), expected);
@@ -214,6 +203,17 @@ fn test_for_loops() -> Result<(), Box<dyn Error>> {
 fn test_method_calls() -> Result<(), Box<dyn Error>> {
     let input = include_str!("test_input/method_calls.rs");
     let expected = include_str!("expected_output/method_calls.rs");
+
+    let replaced = representer::replace(&input)?;
+    assert_eq!(replaced.to_string(), expected);
+
+    Ok(())
+}
+
+#[test]
+fn test_loops() -> Result<(), Box<dyn Error>> {
+    let input = include_str!("test_input/loops.rs");
+    let expected = include_str!("expected_output/loops.rs");
 
     let replaced = representer::replace(&input)?;
     assert_eq!(replaced.to_string(), expected);
