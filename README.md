@@ -35,7 +35,7 @@ fn PLACEHOLDER_1(PLACEHOLDER_2: &str) -> String {
 
 ## Progress
 
-Currently the following statements/expression types are visited by the representer:
+Currently the following statement/expression types are visited by the representer:
 
 - [x] `let` bindings
 - [x] `struct` names 
@@ -62,7 +62,7 @@ Currently the following statements/expression types are visited by the represent
 
 The high-level steps the representer takes are as follows:
 
-1. It first makes a formatting pass over the code using `rustfmt` in order to unsure whitespace and spacing are consistent in the input source code.
+1. It first makes a formatting pass over the code using `rustfmt` in order to ensure whitespace and spacing are consistent in the input source code.
 2. It then transforms the source code into an AST, stripping out comments in the process. 
 3. From there, it traverses the AST, looking for identifiers.
 4. When it finds an identifier:
