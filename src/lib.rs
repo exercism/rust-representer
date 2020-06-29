@@ -165,7 +165,7 @@ impl VisitMut for IdentVisitor {
         // visit method call's receiver
         self.visit_expr_mut(&mut *node.receiver);
 
-        // TODO: Do we want to visit method's identifier as well?
+        // TODO: Do we want to visit method identifiers as well?
         // self.visit_node(node);
 
         // visit method call's arguments

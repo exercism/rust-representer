@@ -209,3 +209,14 @@ fn test_for_loops() -> Result<(), Box<dyn Error>> {
 
     Ok(())
 }
+
+#[test]
+fn test_method_calls() -> Result<(), Box<dyn Error>> {
+    let input = include_str!("test_input/method_calls.rs");
+    let expected = include_str!("expected_output/method_calls.rs");
+
+    let replaced = representer::replace(&input)?;
+    assert_eq!(replaced.to_string(), expected);
+
+    Ok(())
+}
