@@ -6,6 +6,8 @@ use crate::replace_identifier::*;
 
 const PLACEHOLDER: &str = "PLACEHOLDER_";
 
+// Set to persist any keywords for identifiers
+// we don't want to be replaced
 lazy_static! {
     static ref KEYWORDS: HashSet<&'static str> = {
         let mut s = HashSet::new();
@@ -18,7 +20,9 @@ lazy_static! {
 
 #[derive(Debug)]
 pub struct IdentVisitor {
+    // holds each replaced identifier with its placeholder ID
     pub mappings: HashMap<String, u32>,
+    // counter to generate the next placeholder ID
     uid: u32,
 }
 
@@ -30,6 +34,8 @@ impl IdentVisitor {
         }
     }
 
+    // generates a new placeholder string if the identifier hasn't been seen
+    // before, or fetches the pre-existing placeholder if it has been seen before
     fn get_mapping(&mut self, ident: String) -> String {
         let uid = match self.mappings.entry(ident) {
             Entry::Occupied(o) => o.into_mut(),
@@ -42,7 +48,8 @@ impl IdentVisitor {
         format!("{}{}", PLACEHOLDER, uid)
     }
 
-    pub fn visit_node<Node: ReplaceIdentifier>(&mut self, node: &mut Node) {
+    // updates the node's identifier, replacing it with a placeholder
+    pub fn update_node<Node: ReplaceIdentifier>(&mut self, node: &mut Node) {
         let ident_string = node.ident_string();
 
         if !KEYWORDS.contains::<str>(&ident_string) {
@@ -52,7 +59,8 @@ impl IdentVisitor {
         }
     }
 
-    pub fn visit_node_maybe<Node: ReplaceIdentifierMaybe>(&mut self, node: &mut Node) {
+    // updates the node's identifier if it has one, replacing it with a placeholder
+    pub fn update_node_maybe<Node: ReplaceIdentifierMaybe>(&mut self, node: &mut Node) {
         if let Some(ident_string) = node.ident_string() {
             if !KEYWORDS.contains::<str>(&ident_string) {
                 let identifier = self.get_mapping(ident_string);

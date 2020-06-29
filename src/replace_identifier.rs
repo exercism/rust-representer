@@ -4,11 +4,14 @@ use syn::{
     PatIdent, PathSegment, Signature, Variant,
 };
 
+// encapsulates fetching and updating a node's identifier
 pub trait ReplaceIdentifier {
     fn ident_string(&self) -> String;
     fn set_ident(&mut self, ident: String);
 }
 
+// encapsulates fetching and updating a node that might
+// have an identifier
 pub trait ReplaceIdentifierMaybe {
     fn ident_string(&self) -> Option<String>;
     fn set_ident(&mut self, ident: String);
