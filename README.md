@@ -39,7 +39,7 @@ Currently the following statements/expression types are visited by the represent
 
 - [x] `let` bindings
 - [x] `struct` names 
-- [ ] `struct` fields
+- [x] `struct` fields
 - [x] `enum` names 
 - [x] `enum` variants
 - [x] `fn` definitions
