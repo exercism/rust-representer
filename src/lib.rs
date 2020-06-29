@@ -9,10 +9,10 @@ use quote::quote;
 use syn::punctuated::Punctuated;
 use syn::visit_mut::VisitMut;
 use syn::{
-    Arm, Expr, ExprAssignOp, ExprBinary, ExprCall, ExprClosure, ExprField, ExprForLoop, ExprLoop,
-    ExprMatch, ExprMethodCall, ExprPath, ExprUnary, ExprWhile, Field, Fields, FnArg, ItemConst, ItemEnum, ItemStatic,
-    ItemStruct, ItemType, ItemUnion, Macro, Pat, PatIdent, PatTuple, PatType, Path, PathSegment,
-    Signature, Token, Type, Variant,
+    Arm, Expr, ExprAssignOp, ExprBinary, ExprCall, ExprClosure, ExprField, ExprForLoop, ExprIf,
+    ExprLoop, ExprMatch, ExprMethodCall, ExprPath, ExprUnary, ExprWhile, Field, Fields, FnArg,
+    ItemConst, ItemEnum, ItemStatic, ItemStruct, ItemType, ItemUnion, Macro, Pat, PatIdent,
+    PatTuple, PatType, Path, PathSegment, Signature, Token, Type, Variant,
 };
 
 use ident_visitor::IdentVisitor;
@@ -139,6 +139,7 @@ impl VisitMut for IdentVisitor {
             Closure(expr_closure) => self.visit_expr_closure_mut(expr_closure),
             Field(expr_field) => self.visit_expr_field_mut(expr_field),
             ForLoop(expr_for_loop) => self.visit_expr_for_loop_mut(expr_for_loop),
+            If(expr_if) => self.visit_expr_if_mut(expr_if),
             Loop(expr_loop) => self.visit_expr_loop_mut(expr_loop),
             Macro(expr_macro) => self.visit_macro_mut(&mut expr_macro.mac),
             Match(expr_match) => self.visit_expr_match_mut(expr_match),
@@ -229,6 +230,19 @@ impl VisitMut for IdentVisitor {
 
         // visit while loop's body
         self.visit_block_mut(&mut node.body);
+    }
+
+    fn visit_expr_if_mut(&mut self, node: &mut ExprIf) {
+        // visit if expression's condition
+        self.visit_expr_mut(&mut *node.cond);
+
+        // visit if expression's then branch
+        self.visit_block_mut(&mut node.then_branch);
+
+        // visit if expression's else branches
+        if let Some((_, ref mut expr)) = node.else_branch {
+            self.visit_expr_mut(expr);
+        }
     }
 
     fn visit_expr_unary_mut(&mut self, node: &mut ExprUnary) {

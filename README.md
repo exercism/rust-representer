@@ -56,8 +56,7 @@ Currently the following statements/expression types are visited by the represent
 - [x] `for` loops
 - [x] `while` loops
 - [x] `loop`s
-- [ ] tuple expressions
-- [ ] `if` expressions
+- [x] `if` expressions
 
 ## Design
 
