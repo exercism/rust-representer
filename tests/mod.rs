@@ -198,3 +198,14 @@ fn test_blocks() -> Result<(), Box<dyn Error>> {
 
     Ok(())
 }
+
+#[test]
+fn test_for_loops() -> Result<(), Box<dyn Error>> {
+    let input = include_str!("test_input/for_loops.rs");
+    let expected = include_str!("expected_output/for_loops.rs");
+
+    let replaced = representer::replace(&input)?;
+    assert_eq!(replaced.to_string(), expected);
+
+    Ok(())
+}

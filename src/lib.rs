@@ -9,9 +9,10 @@ use quote::quote;
 use syn::punctuated::Punctuated;
 use syn::visit_mut::VisitMut;
 use syn::{
-    Arm, Expr, ExprBinary, ExprCall, ExprClosure, ExprField, ExprMatch, ExprPath, Field, Fields,
-    FnArg, ItemConst, ItemEnum, ItemStatic, ItemStruct, ItemType, ItemUnion, Macro, Pat, PatIdent,
-    PatTuple, PatType, Path, PathSegment, Signature, Token, Type, Variant,
+    Arm, Expr, ExprBinary, ExprCall, ExprClosure, ExprField, ExprForLoop, ExprMatch,
+    ExprMethodCall, ExprPath, Field, Fields, FnArg, ItemConst, ItemEnum, ItemStatic, ItemStruct,
+    ItemType, ItemUnion, Macro, Pat, PatIdent, PatTuple, PatType, Path, PathSegment, Signature,
+    Token, Type, Variant,
 };
 
 use ident_visitor::IdentVisitor;
@@ -139,6 +140,8 @@ impl VisitMut for IdentVisitor {
             Binary(expr_binary) => self.visit_expr_binary_mut(expr_binary),
             Block(expr_block) => self.visit_expr_block_mut(expr_block),
             Field(expr_field) => self.visit_expr_field_mut(expr_field),
+            ForLoop(expr_for_loop) => self.visit_expr_for_loop_mut(expr_for_loop),
+            MethodCall(expr_method_call) => self.visit_expr_method_call_mut(expr_method_call),
             _ => {}
         }
     }
@@ -155,6 +158,19 @@ impl VisitMut for IdentVisitor {
         // visit the match's arms
         for arm in node.arms.iter_mut() {
             self.visit_arm_mut(arm);
+        }
+    }
+
+    fn visit_expr_method_call_mut(&mut self, node: &mut ExprMethodCall) {
+        // visit method call's receiver
+        self.visit_expr_mut(&mut *node.receiver);
+
+        // TODO: Do we want to visit method's identifier as well?
+        // self.visit_node(node);
+
+        // visit method call's arguments
+        for arg in node.args.iter_mut() {
+            self.visit_expr_mut(arg);
         }
     }
 
@@ -181,6 +197,17 @@ impl VisitMut for IdentVisitor {
     fn visit_expr_field_mut(&mut self, node: &mut ExprField) {
         self.visit_expr_mut(&mut *node.base);
         self.visit_member_mut(&mut node.member);
+    }
+
+    fn visit_expr_for_loop_mut(&mut self, node: &mut ExprForLoop) {
+        // visit for loop's pattern
+        self.visit_pat_mut(&mut node.pat);
+
+        // visit for loop's expression
+        self.visit_expr_mut(&mut *node.expr);
+
+        // visit for loop's body
+        self.visit_block_mut(&mut node.body);
     }
 
     fn visit_path_mut(&mut self, node: &mut Path) {

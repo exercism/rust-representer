@@ -6,6 +6,8 @@ A normalizing representer for Exercism's Rust track.
 
 A representer's job is to normalize some input code by stripping out and replacing any trivial details that introduce differences between students' submitted code. Comments, whitespace, and variable names, things that don't contribute to the overall logical flow and structure of the students' approach, are stripped out. In the case of variable names, these are replaced by a standard placeholder.
 
+The ultimate purpose of the representer is to facilitate quicker response times from mentors by standardizing student implementations so that mentors can provide feedback on the _approach_ the student took to solve the problem.
+
 ## Example
 
 Given an example submission for the `two-fer` exercise like the following:
@@ -30,8 +32,6 @@ fn PLACEHOLDER_1(PLACEHOLDER_2: &str) -> String {
     }
 }
 ```
-
-The ultimate purpose of the representer is to facilitate quicker response times from mentors by standardizing student implementations so that mentors can provide feedback on the _approach_ the student took to solve the problem. 
 
 ## Progress
 
