@@ -54,11 +54,10 @@ Currently the following statements/expression types are visited by the represent
 - [x] `macro` arguments
 - [x] closure expressions
 - [x] `for` loops
-- [ ] `while` loops
-- [ ] `loop`s
+- [x] `while` loops
+- [x] `loop`s
 - [ ] tuple expressions
 - [ ] `if` expressions
-
 
 ## Design
 

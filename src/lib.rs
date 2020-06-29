@@ -9,10 +9,10 @@ use quote::quote;
 use syn::punctuated::Punctuated;
 use syn::visit_mut::VisitMut;
 use syn::{
-    Arm, Expr, ExprAssignOp, ExprBinary, ExprCall, ExprClosure, ExprField, ExprForLoop, ExprLoop, ExprMatch,
-    ExprMethodCall, ExprPath, Field, Fields, FnArg, ItemConst, ItemEnum, ItemStatic, ItemStruct,
-    ItemType, ItemUnion, Macro, Pat, PatIdent, PatTuple, PatType, Path, PathSegment, Signature,
-    Token, Type, Variant,
+    Arm, Expr, ExprAssignOp, ExprBinary, ExprCall, ExprClosure, ExprField, ExprForLoop, ExprLoop,
+    ExprMatch, ExprMethodCall, ExprPath, ExprUnary, ExprWhile, Field, Fields, FnArg, ItemConst, ItemEnum, ItemStatic,
+    ItemStruct, ItemType, ItemUnion, Macro, Pat, PatIdent, PatTuple, PatType, Path, PathSegment,
+    Signature, Token, Type, Variant,
 };
 
 use ident_visitor::IdentVisitor;
@@ -144,6 +144,8 @@ impl VisitMut for IdentVisitor {
             Match(expr_match) => self.visit_expr_match_mut(expr_match),
             MethodCall(expr_method_call) => self.visit_expr_method_call_mut(expr_method_call),
             Path(expr_path) => self.visit_expr_path_mut(expr_path),
+            Unary(expr_unary) => self.visit_expr_unary_mut(expr_unary),
+            While(expr_while) => self.visit_expr_while_mut(expr_while),
             _ => {}
         }
     }
@@ -219,6 +221,18 @@ impl VisitMut for IdentVisitor {
 
     fn visit_expr_loop_mut(&mut self, node: &mut ExprLoop) {
         self.visit_block_mut(&mut node.body);
+    }
+
+    fn visit_expr_while_mut(&mut self, node: &mut ExprWhile) {
+        // visit while loop's condition
+        self.visit_expr_mut(&mut *node.cond);
+
+        // visit while loop's body
+        self.visit_block_mut(&mut node.body);
+    }
+
+    fn visit_expr_unary_mut(&mut self, node: &mut ExprUnary) {
+        self.visit_expr_mut(&mut *node.expr);
     }
 
     fn visit_path_mut(&mut self, node: &mut Path) {

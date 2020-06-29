@@ -220,3 +220,14 @@ fn test_loops() -> Result<(), Box<dyn Error>> {
 
     Ok(())
 }
+
+#[test]
+fn test_while_loops() -> Result<(), Box<dyn Error>> {
+    let input = include_str!("test_input/while_loops.rs");
+    let expected = include_str!("expected_output/while_loops.rs");
+
+    let replaced = representer::replace(&input)?;
+    assert_eq!(replaced.to_string(), expected);
+
+    Ok(())
+}
