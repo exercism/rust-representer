@@ -1,7 +1,7 @@
 use proc_macro2::{Ident, Span};
 use syn::{
     ExprMethodCall, Field, ItemConst, ItemEnum, ItemStatic, ItemStruct, ItemType, ItemUnion,
-    PatIdent, PathSegment, Signature, Variant,
+    Member, PatIdent, PathSegment, Signature, Variant,
 };
 
 // encapsulates fetching and updating a node's identifier
@@ -135,6 +135,22 @@ impl ReplaceIdentifierMaybe for Field {
     fn set_ident(&mut self, ident: String) {
         if let Some(_) = self.ident {
             self.ident = Some(Ident::new(&ident, Span::call_site()));
+        }
+    }
+}
+
+impl ReplaceIdentifierMaybe for Member {
+    fn ident_string(&self) -> Option<String> {
+        if let Member::Named(ident) = self {
+            Some(ident.to_string())
+        } else {
+            None
+        }
+    }
+
+    fn set_ident(&mut self, ident: String) {
+        if let Member::Named(i) = self {
+            *i = Ident::new(&ident, Span::call_site());
         }
     }
 }

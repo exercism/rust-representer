@@ -11,7 +11,7 @@ use syn::visit_mut::VisitMut;
 use syn::{
     Arm, Expr, ExprAssignOp, ExprBinary, ExprCall, ExprClosure, ExprField, ExprForLoop, ExprIf,
     ExprLoop, ExprMatch, ExprMethodCall, ExprPath, ExprUnary, ExprWhile, Field, Fields, FnArg,
-    ItemConst, ItemEnum, ItemStatic, ItemStruct, ItemType, ItemUnion, Macro, Pat, PatIdent,
+    ItemConst, ItemEnum, ItemImpl, ItemStatic, ItemStruct, ItemType, ItemUnion, Macro, Member, Pat, PatIdent,
     PatTuple, PatType, Path, PathSegment, Signature, Token, Type, Variant,
 };
 
@@ -101,8 +101,12 @@ impl VisitMut for IdentVisitor {
         // update field's identifier if it has one
         self.update_node_maybe(node);
 
-        // visit the field's type
-        self.visit_type_mut(&mut node.ty);
+        // TODO: visit the field's type?
+        // self.visit_type_mut(&mut node.ty);
+    }
+
+    fn visit_member_mut(&mut self, node: &mut Member) {
+        self.update_node_maybe(node);
     }
 
     fn visit_pat_mut(&mut self, node: &mut Pat) {

@@ -14,6 +14,7 @@ lazy_static! {
         s.insert("main");
         s.insert("Some");
         s.insert("None");
+        s.insert("self");
         s
     };
 }

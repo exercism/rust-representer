@@ -242,3 +242,14 @@ fn test_if_expressions() -> Result<(), Box<dyn Error>> {
 
     Ok(())
 }
+
+#[test]
+fn test_impl_blocks() -> Result<(), Box<dyn Error>> {
+    let input = include_str!("test_input/impl_blocks.rs");
+    let expected = include_str!("expected_output/impl_blocks.rs");
+
+    let replaced = representer::replace(&input)?;
+    assert_eq!(replaced.to_string(), expected);
+
+    Ok(())
+}

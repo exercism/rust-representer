@@ -57,6 +57,7 @@ Currently the following statement/expression types are visited by the represente
 - [x] `while` loops
 - [x] `loop`s
 - [x] `if` expressions
+- [x] `impl` blocks
 
 ## Design
 
