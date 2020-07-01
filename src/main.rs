@@ -1,21 +1,37 @@
-use std::env;
+use clap::{App, Arg, ArgMatches};
 use std::fs::File;
-use std::io::prelude::*;
-use std::io::Read;
-use std::process;
+use std::io::{prelude::*, Read};
+
+const OUTPUT: &'static str = "representation.rs";
+
+fn init_app<'a>() -> ArgMatches<'a> {
+    App::new(env!("CARGO_PKG_NAME"))
+        .version(env!("CARGO_PKG_VERSION"))
+        .about(env!("CARGO_PKG_DESCRIPTION"))
+        .arg(
+            Arg::with_name("slug")
+                .short("s")
+                .long("slug")
+                .help("The slug of the exercise to be analyzed (e.g. 'reverse-string').")
+                .takes_value(true)
+                .required(true),
+        )
+        .arg(
+            Arg::with_name("path")
+                .short("p")
+                .long("path")
+                .help("A path to a directory containing the submitted file(s).")
+                .takes_value(true)
+                .required(true),
+        )
+        .get_matches()
+}
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let mut args = env::args();
-    let _ = args.next();
-    let output_path = "./output/normalized.rs";
+    let matches = init_app();
 
-    let filename = match (args.next(), args.next()) {
-        (Some(filename), None) => filename,
-        _ => {
-            eprintln!("Usage: representer path/to/filename.rs");
-            process::exit(1);
-        }
-    };
+    let path = matches.value_of("path").unwrap();
+    let filename = format!("{}src/lib.rs", path);
 
     let mut input = File::open(&filename)?;
     let mut src = String::new();
@@ -23,7 +39,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let replaced = representer::replace(&src)?;
 
-    let mut output = File::create(output_path)?;
+    let mut output = File::create(format!("{}{}", path, OUTPUT))?;
     output.write(replaced.to_string().as_bytes())?;
 
     Ok(())
