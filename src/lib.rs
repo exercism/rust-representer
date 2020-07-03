@@ -11,7 +11,7 @@ use syn::visit_mut::VisitMut;
 use syn::{
     Arm, Expr, ExprAssignOp, ExprBinary, ExprCall, ExprClosure, ExprField, ExprForLoop, ExprIf,
     ExprLet, ExprLoop, ExprMatch, ExprMethodCall, ExprPath, ExprType, ExprUnary, ExprWhile, Field, Fields, FnArg,
-    ItemConst, ItemEnum, ItemFn, ItemStatic, ItemStruct, ItemType, ItemUnion, Macro, Member, Pat,
+    ItemConst, ItemEnum, ItemFn, ItemImpl, ItemStatic, ItemStruct, ItemTrait, ItemType, ItemUnion, Macro, Member, Pat,
     PatIdent, PatTuple, PatType, Path, PathSegment, ReturnType, Signature, Token, Type, Variant,
 };
 
@@ -51,6 +51,34 @@ impl VisitMut for IdentVisitor {
         // visit enum's variants
         for variant in node.variants.iter_mut() {
             self.visit_variant_mut(variant);
+        }
+    }
+
+    fn visit_item_impl_mut(&mut self, node: &mut ItemImpl) {
+        // visit the impl's trait if it has one 
+        if let Some((_, ref mut path, _)) = node.trait_ {
+            // only replace the trait path if the trait is a 
+            // user-defined trait
+            for segment in path.segments.iter_mut() {
+                self.replace_identifier_if_mapped(segment);
+            }
+        }
+
+        // visit the impl's type
+        self.visit_type_mut(&mut *node.self_ty);
+
+        // visit the impl's items
+        for impl_item in node.items.iter_mut() {
+            self.visit_impl_item_mut(impl_item);
+        }
+    }
+
+    fn visit_item_trait_mut(&mut self, node: &mut ItemTrait) {
+        self.replace_identifier(node);
+
+        // visit trait's items
+        for trait_item in node.items.iter_mut() {
+            self.visit_trait_item_mut(trait_item);
         }
     }
 

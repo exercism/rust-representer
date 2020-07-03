@@ -1,6 +1,6 @@
 use proc_macro2::{Ident, Span};
 use syn::{
-    ExprMethodCall, Field, ItemConst, ItemEnum, ItemStatic, ItemStruct, ItemType, ItemUnion,
+    ExprMethodCall, Field, ItemConst, ItemEnum, ItemStatic, ItemStruct, ItemTrait, ItemType, ItemUnion,
     Member, PatIdent, PathSegment, Signature, Variant,
 };
 
@@ -38,6 +38,16 @@ impl ReplaceIdentifier for ItemStruct {
 }
 
 impl ReplaceIdentifier for ItemEnum {
+    fn ident_string(&self) -> String {
+        self.ident.to_string()
+    }
+
+    fn set_ident(&mut self, ident: String) {
+        self.ident = Ident::new(&ident, Span::call_site());
+    }
+}
+
+impl ReplaceIdentifier for ItemTrait {
     fn ident_string(&self) -> String {
         self.ident.to_string()
     }

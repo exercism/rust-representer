@@ -298,3 +298,14 @@ fn test_user_defined_types() -> Result<(), Box<dyn Error>> {
 
     Ok(())
 }
+
+#[test]
+fn test_user_defined_traits() -> Result<(), Box<dyn Error>> {
+    let input = include_str!("test_input/user_defined_traits.rs");
+    let expected = include_str!("expected_output/user_defined_traits.rs");
+
+    let replaced = replace(&input)?;
+    assert_eq!(replaced.to_string(), expected);
+
+    Ok(())
+}

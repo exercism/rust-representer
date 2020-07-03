@@ -61,6 +61,7 @@ Currently the following statement/expression types are visited by the represente
 - [x] type annotations
 - [x] `if let` bindings
 - [ ] user-defined types
+- [ ] user-defined traits
 - [ ] `mod` imports
 
 ## Design
