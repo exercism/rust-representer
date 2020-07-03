@@ -12,19 +12,19 @@ use syn::{
     Arm, Expr, ExprAssignOp, ExprBinary, ExprCall, ExprClosure, ExprField, ExprForLoop, ExprIf,
     ExprLet, ExprLoop, ExprMatch, ExprMethodCall, ExprPath, ExprType, ExprUnary, ExprWhile, Field, Fields, FnArg,
     ItemConst, ItemEnum, ItemFn, ItemStatic, ItemStruct, ItemType, ItemUnion, Macro, Member, Pat,
-    PatIdent, PatTuple, PatType, Path, PathSegment, Signature, Token, Type, Variant,
+    PatIdent, PatTuple, PatType, Path, PathSegment, ReturnType, Signature, Token, Type, Variant,
 };
 
 use ident_visitor::IdentVisitor;
 
 impl VisitMut for IdentVisitor {
     fn visit_pat_ident_mut(&mut self, node: &mut PatIdent) {
-        self.update_node(node);
+        self.replace_identifier(node);
     }
 
     fn visit_item_struct_mut(&mut self, node: &mut ItemStruct) {
         // visit struct's identifier
-        self.update_node(node);
+        self.replace_identifier(node);
 
         // visit struct's fields
         for field in node.fields.iter_mut() {
@@ -46,7 +46,7 @@ impl VisitMut for IdentVisitor {
 
     fn visit_item_enum_mut(&mut self, node: &mut ItemEnum) {
         // visit enum's identifier
-        self.update_node(node);
+        self.replace_identifier(node);
 
         // visit enum's variants
         for variant in node.variants.iter_mut() {
@@ -55,34 +55,43 @@ impl VisitMut for IdentVisitor {
     }
 
     fn visit_item_const_mut(&mut self, node: &mut ItemConst) {
-        self.update_node(node);
+        self.replace_identifier(node);
     }
 
     fn visit_item_static_mut(&mut self, node: &mut ItemStatic) {
-        self.update_node(node);
+        self.replace_identifier(node);
     }
 
     fn visit_item_union_mut(&mut self, node: &mut ItemUnion) {
-        self.update_node(node);
+        self.replace_identifier(node);
     }
 
     fn visit_item_type_mut(&mut self, node: &mut ItemType) {
-        self.update_node(node);
+        self.replace_identifier(node);
     }
 
     fn visit_signature_mut(&mut self, node: &mut Signature) {
         // handle signature's identifier
-        self.update_node(node);
+        self.replace_identifier(node);
 
         // handle signature's inputs, i.e. the function's arguments
         for node in node.inputs.iter_mut() {
             self.visit_fn_arg_mut(node);
         }
+
+        // handle function's return type
+        self.visit_return_type_mut(&mut node.output);
+    }
+
+    fn visit_return_type_mut(&mut self, node: &mut ReturnType) {
+        if let ReturnType::Type(_, rt) = node {
+            self.visit_type_mut(&mut *rt);
+        }
     }
 
     fn visit_variant_mut(&mut self, node: &mut Variant) {
         // visit variant's identifier
-        self.update_node(node);
+        self.replace_identifier(node);
 
         // visit variant's fields
         self.visit_fields_mut(&mut node.fields);
@@ -111,14 +120,14 @@ impl VisitMut for IdentVisitor {
 
     fn visit_field_mut(&mut self, node: &mut Field) {
         // update field's identifier if it has one
-        self.update_node_maybe(node);
+        self.replace_possible_identifier(node);
 
         // TODO: visit the field's type?
         // self.visit_type_mut(&mut node.ty);
     }
 
     fn visit_member_mut(&mut self, node: &mut Member) {
-        self.update_node_maybe(node);
+        self.replace_possible_identifier(node);
     }
 
     fn visit_pat_mut(&mut self, node: &mut Pat) {
@@ -137,8 +146,19 @@ impl VisitMut for IdentVisitor {
     }
 
     fn visit_type_mut(&mut self, node: &mut Type) {
-        if let Type::Path(type_path) = node {
-            self.visit_path_mut(&mut type_path.path);
+        // only replace the type's identifier if it already
+        // has a pre-existing mapping 
+        match node {
+            Type::Path(type_path) => {
+                let mut segments = type_path.path.segments.clone();
+
+                for segment in segments.iter_mut() {
+                    self.replace_identifier_if_mapped(segment);
+                }
+
+                type_path.path.segments = segments;
+            },
+            _ => {}
         }
     }
 
@@ -199,7 +219,7 @@ impl VisitMut for IdentVisitor {
         self.visit_expr_mut(&mut *node.receiver);
 
         // TODO: Do we want to visit method identifiers as well?
-        // self.update_node(node);
+        // self.replace_identifier(node);
 
         // visit method call's arguments
         for arg in node.args.iter_mut() {
@@ -306,7 +326,7 @@ impl VisitMut for IdentVisitor {
     }
 
     fn visit_path_segment_mut(&mut self, node: &mut PathSegment) {
-        self.update_node(node);
+        self.replace_identifier(node);
     }
 
     fn visit_pat_tuple_mut(&mut self, node: &mut PatTuple) {

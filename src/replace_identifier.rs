@@ -12,7 +12,7 @@ pub trait ReplaceIdentifier {
 
 // encapsulates fetching and updating a node that might
 // have an identifier
-pub trait ReplaceIdentifierMaybe {
+pub trait ReplacePossibleIdentifier {
     fn ident_string(&self) -> Option<String>;
     fn set_ident(&mut self, ident: String);
 }
@@ -127,7 +127,7 @@ impl ReplaceIdentifier for ExprMethodCall {
     }
 }
 
-impl ReplaceIdentifierMaybe for Field {
+impl ReplacePossibleIdentifier for Field {
     fn ident_string(&self) -> Option<String> {
         self.ident.as_ref().map_or(None, |i| Some(i.to_string()))
     }
@@ -139,7 +139,7 @@ impl ReplaceIdentifierMaybe for Field {
     }
 }
 
-impl ReplaceIdentifierMaybe for Member {
+impl ReplacePossibleIdentifier for Member {
     fn ident_string(&self) -> Option<String> {
         if let Member::Named(ident) = self {
             Some(ident.to_string())
