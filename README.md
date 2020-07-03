@@ -59,8 +59,9 @@ Currently the following statement/expression types are visited by the represente
 - [x] `if` expressions
 - [x] `impl` blocks
 - [x] type annotations
-- [ ] `if let` bindings
+- [x] `if let` bindings
 - [ ] user-defined types
+- [ ] `mod` imports
 
 ## Design
 

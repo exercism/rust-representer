@@ -276,3 +276,14 @@ fn test_ignore_doc_comments() -> Result<(), Box<dyn Error>> {
 
     Ok(())
 }
+
+#[test]
+fn test_if_let_expressions() -> Result<(), Box<dyn Error>> {
+    let input = include_str!("test_input/if_let_expressions.rs");
+    let expected = include_str!("expected_output/if_let_expressions.rs");
+
+    let replaced = replace(&input)?;
+    assert_eq!(replaced.to_string(), expected);
+
+    Ok(())
+}
