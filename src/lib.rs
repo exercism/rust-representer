@@ -6,6 +6,8 @@ mod replace_identifier;
 
 use proc_macro2::TokenStream;
 use quote::quote;
+use std::fs::File;
+use std::io::prelude::*;
 use syn::punctuated::Punctuated;
 use syn::visit_mut::VisitMut;
 use syn::{
@@ -17,6 +19,8 @@ use syn::{
 };
 
 use ident_visitor::IdentVisitor;
+
+const OUTPUT: &'static str = "representation.rs";
 
 impl VisitMut for IdentVisitor {
     fn visit_pat_ident_mut(&mut self, node: &mut PatIdent) {
@@ -394,10 +398,24 @@ impl VisitMut for IdentVisitor {
     }
 }
 
-pub fn replace(src: &str) -> Result<TokenStream, Box<dyn std::error::Error>> {
-    let mut syntax_tree: syn::File = syn::parse_file(&src)?;
+// The entry point that kicks off the process of visiting the AST
+pub fn replace(mut ast: &mut syn::File) -> TokenStream {
     let mut visitor = IdentVisitor::new();
-    visitor.visit_file_mut(&mut syntax_tree);
+    visitor.visit_file_mut(&mut ast);
 
-    Ok(quote!(#syntax_tree))
+    quote!(#ast)
+}
+
+pub fn run(path: &str) -> Result<(), Box<dyn std::error::Error>> {
+    let mut input = File::open(path)?;
+    let mut src = String::new();
+    input.read_to_string(&mut src)?;
+
+    let mut ast: syn::File = syn::parse_file(&src)?;
+    let replaced = replace(&mut ast);
+
+    let mut output = File::create(format!("{}{}", path, OUTPUT))?;
+    output.write(replaced.to_string().as_bytes())?;
+
+    Ok(())
 }
