@@ -81,7 +81,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "representer"
+name = "rust-representer"
 version = "0.1.0"
 dependencies = [
  "clap",

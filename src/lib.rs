@@ -10,9 +10,9 @@ use syn::punctuated::Punctuated;
 use syn::visit_mut::VisitMut;
 use syn::{
     Arm, Expr, ExprAssignOp, ExprBinary, ExprCall, ExprClosure, ExprField, ExprForLoop, ExprIf,
-    ExprLoop, ExprMatch, ExprMethodCall, ExprPath, ExprUnary, ExprWhile, Field, Fields, FnArg,
-    ItemConst, ItemEnum, ItemImpl, ItemStatic, ItemStruct, ItemType, ItemUnion, Macro, Member, Pat, PatIdent,
-    PatTuple, PatType, Path, PathSegment, Signature, Token, Type, Variant,
+    ExprLet, ExprLoop, ExprMatch, ExprMethodCall, ExprPath, ExprType, ExprUnary, ExprWhile, Field, Fields, FnArg,
+    ItemConst, ItemEnum, ItemStatic, ItemStruct, ItemType, ItemUnion, Macro, Member, Pat,
+    PatIdent, PatTuple, PatType, Path, PathSegment, Signature, Token, Type, Variant,
 };
 
 use ident_visitor::IdentVisitor;
@@ -110,10 +110,12 @@ impl VisitMut for IdentVisitor {
     }
 
     fn visit_pat_mut(&mut self, node: &mut Pat) {
+        use Pat::*;
         match node {
-            Pat::Ident(pat_ident) => self.visit_pat_ident_mut(pat_ident),
-            Pat::Tuple(pat_tuple) => self.visit_pat_tuple_mut(pat_tuple),
-            Pat::TupleStruct(pat_tuple_struct) => self.visit_pat_tuple_struct_mut(pat_tuple_struct),
+            Ident(pat_ident) => self.visit_pat_ident_mut(pat_ident),
+            Tuple(pat_tuple) => self.visit_pat_tuple_mut(pat_tuple),
+            TupleStruct(pat_tuple_struct) => self.visit_pat_tuple_struct_mut(pat_tuple_struct),
+            Type(pat_type) => self.visit_pat_type_mut(pat_type),
             _ => {}
         }
     }
@@ -145,11 +147,13 @@ impl VisitMut for IdentVisitor {
             Field(expr_field) => self.visit_expr_field_mut(expr_field),
             ForLoop(expr_for_loop) => self.visit_expr_for_loop_mut(expr_for_loop),
             If(expr_if) => self.visit_expr_if_mut(expr_if),
+            Let(expr_let) => self.visit_expr_let_mut(expr_let),
             Loop(expr_loop) => self.visit_expr_loop_mut(expr_loop),
             Macro(expr_macro) => self.visit_macro_mut(&mut expr_macro.mac),
             Match(expr_match) => self.visit_expr_match_mut(expr_match),
             MethodCall(expr_method_call) => self.visit_expr_method_call_mut(expr_method_call),
             Path(expr_path) => self.visit_expr_path_mut(expr_path),
+            Type(expr_type) => self.visit_expr_type_mut(expr_type),
             Unary(expr_unary) => self.visit_expr_unary_mut(expr_unary),
             While(expr_while) => self.visit_expr_while_mut(expr_while),
             _ => {}
@@ -263,6 +267,21 @@ impl VisitMut for IdentVisitor {
     fn visit_expr_unary_mut(&mut self, node: &mut ExprUnary) {
         // visit the unary's expression
         self.visit_expr_mut(&mut *node.expr);
+    }
+
+    fn visit_expr_type_mut(&mut self, node: &mut ExprType) {
+        self.visit_expr_mut(&mut *node.expr);
+
+        // TODO: Visit the type itself?
+        // self.visit_type_mut(&mut *node.ty);
+    }
+
+    fn visit_expr_let_mut(&mut self, node: &mut ExprLet) {
+        // visit let guard's pattern
+        self.visit_pat_mut(&mut node.pat);
+
+        // visit let guard's expression
+        self.visit_expr_mut(&mut node.expr);
     }
 
     fn visit_path_mut(&mut self, node: &mut Path) {

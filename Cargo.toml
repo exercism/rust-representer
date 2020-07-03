@@ -1,5 +1,5 @@
 [package]
-name = "representer"
+name = "rust-representer"
 version = "0.1.0"
 authors = ["seanchen <seanchen11235@gmail.com>"]
 edition = "2018"

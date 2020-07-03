@@ -40,7 +40,7 @@ Currently the following statement/expression types are visited by the represente
 - [x] `let` bindings
 - [x] `struct` names 
 - [x] `struct` fields
-- [x] `enum` names 
+- [x] `enum` names
 - [x] `enum` variants
 - [x] `fn` definitions
 - [x] `fn` calls
@@ -58,6 +58,8 @@ Currently the following statement/expression types are visited by the represente
 - [x] `loop`s
 - [x] `if` expressions
 - [x] `impl` blocks
+- [x] type annotations
+- [ ] `if let` bindings
 
 ## Design
 

@@ -1,4 +1,5 @@
 use clap::{App, Arg, ArgMatches};
+use rust_representer::replace;
 use std::fs::File;
 use std::io::{prelude::*, Read};
 
@@ -37,7 +38,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut src = String::new();
     input.read_to_string(&mut src)?;
 
-    let replaced = representer::replace(&src)?;
+    let replaced = replace(&src)?;
 
     let mut output = File::create(format!("{}{}", path, OUTPUT))?;
     output.write(replaced.to_string().as_bytes())?;
