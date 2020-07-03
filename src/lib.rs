@@ -10,9 +10,10 @@ use syn::punctuated::Punctuated;
 use syn::visit_mut::VisitMut;
 use syn::{
     Arm, Expr, ExprAssignOp, ExprBinary, ExprCall, ExprClosure, ExprField, ExprForLoop, ExprIf,
-    ExprLet, ExprLoop, ExprMatch, ExprMethodCall, ExprPath, ExprType, ExprUnary, ExprWhile, Field, Fields, FnArg,
-    ItemConst, ItemEnum, ItemFn, ItemImpl, ItemStatic, ItemStruct, ItemTrait, ItemType, ItemUnion, Macro, Member, Pat,
-    PatIdent, PatTuple, PatType, Path, PathSegment, ReturnType, Signature, Token, Type, Variant,
+    ExprLet, ExprLoop, ExprMatch, ExprMethodCall, ExprPath, ExprType, ExprUnary, ExprWhile, Field,
+    Fields, FnArg, ItemConst, ItemEnum, ItemFn, ItemImpl, ItemStatic, ItemStruct, ItemTrait,
+    ItemType, ItemUnion, Macro, Member, Pat, PatIdent, PatTuple, PatType, Path, PathSegment,
+    ReturnType, Signature, Token, Type, Variant,
 };
 
 use ident_visitor::IdentVisitor;
@@ -34,7 +35,7 @@ impl VisitMut for IdentVisitor {
 
     fn visit_item_fn_mut(&mut self, node: &mut ItemFn) {
         // clearing out the node's attributes is a hacky way
-        // of getting rid of doc comments 
+        // of getting rid of doc comments
         node.attrs = vec![];
 
         // visit function's signature
@@ -55,9 +56,9 @@ impl VisitMut for IdentVisitor {
     }
 
     fn visit_item_impl_mut(&mut self, node: &mut ItemImpl) {
-        // visit the impl's trait if it has one 
+        // visit the impl's trait if it has one
         if let Some((_, ref mut path, _)) = node.trait_ {
-            // only replace the trait path if the trait is a 
+            // only replace the trait path if the trait is a
             // user-defined trait
             for segment in path.segments.iter_mut() {
                 self.replace_identifier_if_mapped(segment);
@@ -175,7 +176,7 @@ impl VisitMut for IdentVisitor {
 
     fn visit_type_mut(&mut self, node: &mut Type) {
         // only replace the type's identifier if it already
-        // has a pre-existing mapping 
+        // has a pre-existing mapping
         match node {
             Type::Path(type_path) => {
                 let mut segments = type_path.path.segments.clone();
@@ -185,7 +186,7 @@ impl VisitMut for IdentVisitor {
                 }
 
                 type_path.path.segments = segments;
-            },
+            }
             _ => {}
         }
     }

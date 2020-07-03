@@ -1,7 +1,7 @@
 use proc_macro2::{Ident, Span};
 use syn::{
-    ExprMethodCall, Field, ItemConst, ItemEnum, ItemStatic, ItemStruct, ItemTrait, ItemType, ItemUnion,
-    Member, PatIdent, PathSegment, Signature, Variant,
+    ExprMethodCall, Field, ItemConst, ItemEnum, ItemStatic, ItemStruct, ItemTrait, ItemType,
+    ItemUnion, Member, PatIdent, PathSegment, Signature, Variant,
 };
 
 // encapsulates fetching and updating a node's identifier

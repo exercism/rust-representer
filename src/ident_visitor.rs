@@ -68,7 +68,7 @@ impl IdentVisitor {
             node.set_ident(identifier);
         }
     }
-    
+
     // updates the node's identifier if the identifier has already been mapped
     pub fn replace_identifier_if_mapped<Node: ReplaceIdentifier>(&mut self, node: &mut Node) {
         let ident_string = node.ident_string();
@@ -81,7 +81,10 @@ impl IdentVisitor {
     }
 
     // updates the node's identifier if it has one, replacing it with a placeholder
-    pub fn replace_possible_identifier<Node: ReplacePossibleIdentifier>(&mut self, node: &mut Node) {
+    pub fn replace_possible_identifier<Node: ReplacePossibleIdentifier>(
+        &mut self,
+        node: &mut Node,
+    ) {
         if let Some(ident_string) = node.ident_string() {
             if !KEYWORDS.contains::<str>(&ident_string) {
                 let identifier = self.get_or_insert_mapping(ident_string);
