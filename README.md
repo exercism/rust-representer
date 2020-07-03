@@ -60,6 +60,7 @@ Currently the following statement/expression types are visited by the represente
 - [x] `impl` blocks
 - [x] type annotations
 - [ ] `if let` bindings
+- [ ] user-defined types
 
 ## Design
 

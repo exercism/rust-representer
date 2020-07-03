@@ -265,3 +265,14 @@ fn test_typed_let_binding() -> Result<(), Box<dyn Error>> {
 
     Ok(())
 }
+
+#[test]
+fn test_ignore_doc_comments() -> Result<(), Box<dyn Error>> {
+    let input = include_str!("test_input/ignore_doc_comments.rs");
+    let expected = include_str!("expected_output/ignore_doc_comments.rs");
+
+    let replaced = replace(&input)?;
+    assert_eq!(replaced.to_string(), expected);
+
+    Ok(())
+}

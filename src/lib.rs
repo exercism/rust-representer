@@ -11,7 +11,7 @@ use syn::visit_mut::VisitMut;
 use syn::{
     Arm, Expr, ExprAssignOp, ExprBinary, ExprCall, ExprClosure, ExprField, ExprForLoop, ExprIf,
     ExprLet, ExprLoop, ExprMatch, ExprMethodCall, ExprPath, ExprType, ExprUnary, ExprWhile, Field, Fields, FnArg,
-    ItemConst, ItemEnum, ItemStatic, ItemStruct, ItemType, ItemUnion, Macro, Member, Pat,
+    ItemConst, ItemEnum, ItemFn, ItemStatic, ItemStruct, ItemType, ItemUnion, Macro, Member, Pat,
     PatIdent, PatTuple, PatType, Path, PathSegment, Signature, Token, Type, Variant,
 };
 
@@ -30,6 +30,18 @@ impl VisitMut for IdentVisitor {
         for field in node.fields.iter_mut() {
             self.visit_field_mut(field);
         }
+    }
+
+    fn visit_item_fn_mut(&mut self, node: &mut ItemFn) {
+        // clearing out the node's attributes is a hacky way
+        // of getting rid of doc comments 
+        node.attrs = vec![];
+
+        // visit function's signature
+        self.visit_signature_mut(&mut node.sig);
+
+        // visit function's block
+        self.visit_block_mut(&mut *node.block);
     }
 
     fn visit_item_enum_mut(&mut self, node: &mut ItemEnum) {
