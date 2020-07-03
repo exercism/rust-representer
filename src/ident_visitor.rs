@@ -1,8 +1,7 @@
+use crate::replace_identifier::*;
 use std::collections::hash_map::Entry;
 use std::collections::HashMap;
 use std::collections::HashSet;
-
-use crate::replace_identifier::*;
 
 const PLACEHOLDER: &str = "PLACEHOLDER_";
 

@@ -5,15 +5,14 @@ mod ident_visitor;
 mod replace_identifier;
 mod visit_mut;
 
+use ident_visitor::IdentVisitor;
 use proc_macro2::TokenStream;
 use quote::quote;
 use std::fs::File;
 use std::io::prelude::*;
 use syn::visit_mut::VisitMut;
 
-use ident_visitor::IdentVisitor;
-
-const OUTPUT: &'static str = "representation.rs";
+const OUTPUT_FILE: &'static str = "representation.rs";
 
 // The entry point that kicks off the process of visiting the AST
 pub fn replace(mut ast: &mut syn::File) -> TokenStream {
@@ -31,7 +30,7 @@ pub fn run(path: &str) -> Result<(), Box<dyn std::error::Error>> {
     let mut ast: syn::File = syn::parse_file(&src)?;
     let replaced = replace(&mut ast);
 
-    let mut output = File::create(format!("{}{}", path, OUTPUT))?;
+    let mut output = File::create(format!("{}{}", path, OUTPUT_FILE))?;
     output.write(replaced.to_string().as_bytes())?;
 
     Ok(())
