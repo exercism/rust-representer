@@ -63,6 +63,7 @@ Currently the following statement/expression types are visited by the represente
 - [ ] user-defined types
 - [ ] user-defined traits
 - [ ] `mod` imports
+- [ ] output variable mappings to a JSON file
 
 ## Design
 
