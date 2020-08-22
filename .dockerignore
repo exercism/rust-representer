@@ -2,3 +2,5 @@
 **/*.rs.bk
 *.swp
 .git/
+.idea/
+.github/
