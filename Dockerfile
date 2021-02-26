@@ -4,10 +4,6 @@ WORKDIR /representer
 
 COPY . .
 
-# Download exercism tooling webserver
-RUN wget -P /usr/local/bin https://github.com/exercism/local-tooling-webserver/releases/latest/download/exercism_local_tooling_webserver && \
-    chmod +x /usr/local/bin/exercism_local_tooling_webserver
-
 # Setup build environment
 RUN apt-get update && \
     apt-get install -y musl musl-dev musl-tools && \
@@ -23,6 +19,5 @@ FROM alpine:latest
 WORKDIR /opt/representer
 
 COPY --from=base /representer/bin/* ./bin/
-COPY --from=base /usr/local/bin/ /usr/local/bin/
 
 ENTRYPOINT ["bin/generate.sh"]
