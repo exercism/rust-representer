@@ -7,3 +7,4 @@
 .appends
 .gitignore
 .gitattributes
+.dockerignore
