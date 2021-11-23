@@ -4,3 +4,8 @@
 .git/
 .idea/
 .github/
+.appends
+.gitignore
+.gitattributes
+.dockerignore
+Dockerfile
