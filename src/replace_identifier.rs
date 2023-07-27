@@ -139,11 +139,11 @@ impl ReplaceIdentifier for ExprMethodCall {
 
 impl ReplacePossibleIdentifier for Field {
     fn ident_string(&self) -> Option<String> {
-        self.ident.as_ref().map_or(None, |i| Some(i.to_string()))
+        self.ident.as_ref().map(|i| i.to_string())
     }
 
     fn set_ident(&mut self, ident: String) {
-        if let Some(_) = self.ident {
+        if self.ident.is_some() {
             self.ident = Some(Ident::new(&ident, Span::call_site()));
         }
     }

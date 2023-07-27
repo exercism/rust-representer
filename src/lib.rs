@@ -12,12 +12,12 @@ use std::fs::File;
 use std::io::prelude::*;
 use syn::visit_mut::VisitMut;
 
-const OUTPUT_FILE: &'static str = "representation.rs";
+const OUTPUT_FILE: &str = "representation.rs";
 
 // The entry point that kicks off the process of visiting the AST
-pub fn replace(mut ast: &mut syn::File) -> TokenStream {
+pub fn replace(ast: &mut syn::File) -> TokenStream {
     let mut visitor = IdentVisitor::new();
-    visitor.visit_file_mut(&mut ast);
+    visitor.visit_file_mut(ast);
 
     quote!(#ast)
 }
@@ -31,7 +31,7 @@ pub fn run(path: &str) -> Result<(), Box<dyn std::error::Error>> {
     let replaced = replace(&mut ast);
 
     let mut output = File::create(format!("{}{}", path, OUTPUT_FILE))?;
-    output.write(replaced.to_string().as_bytes())?;
+    output.write_all(replaced.to_string().as_bytes())?;
 
     Ok(())
 }
