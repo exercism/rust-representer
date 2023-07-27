@@ -35,7 +35,7 @@ impl VisitMut for IdentVisitor {
         self.visit_signature_mut(&mut node.sig);
 
         // visit function's block
-        self.visit_block_mut(&mut *node.block);
+        self.visit_block_mut(&mut node.block);
     }
 
     fn visit_item_enum_mut(&mut self, node: &mut ItemEnum) {
@@ -59,7 +59,7 @@ impl VisitMut for IdentVisitor {
         }
 
         // visit the impl's type
-        self.visit_type_mut(&mut *node.self_ty);
+        self.visit_type_mut(&mut node.self_ty);
 
         // visit the impl's items
         for impl_item in node.items.iter_mut() {
@@ -165,23 +165,20 @@ impl VisitMut for IdentVisitor {
     }
 
     fn visit_pat_type_mut(&mut self, node: &mut PatType) {
-        self.visit_pat_mut(&mut *node.pat);
+        self.visit_pat_mut(&mut node.pat);
     }
 
     fn visit_type_mut(&mut self, node: &mut Type) {
         // only replace the type's identifier if it already has a
         // pre-existing mapping, i.e. it's a user-defined type
-        match node {
-            Type::Path(type_path) => {
-                let mut segments = type_path.path.segments.clone();
+        if let Type::Path(type_path) = node {
+            let mut segments = type_path.path.segments.clone();
 
-                for segment in segments.iter_mut() {
-                    self.replace_identifier_if_mapped(segment);
-                }
-
-                type_path.path.segments = segments;
+            for segment in segments.iter_mut() {
+                self.replace_identifier_if_mapped(segment);
             }
-            _ => {}
+
+            type_path.path.segments = segments;
         }
     }
 
@@ -217,19 +214,19 @@ impl VisitMut for IdentVisitor {
 
     fn visit_expr_assign_op_mut(&mut self, node: &mut ExprAssignOp) {
         // visit the left and right sides of the assignment op
-        self.visit_expr_mut(&mut *node.left);
-        self.visit_expr_mut(&mut *node.right);
+        self.visit_expr_mut(&mut node.left);
+        self.visit_expr_mut(&mut node.right);
     }
 
     fn visit_expr_binary_mut(&mut self, node: &mut ExprBinary) {
         // visit the left and right sides of the binary op
-        self.visit_expr_mut(&mut *node.left);
-        self.visit_expr_mut(&mut *node.right);
+        self.visit_expr_mut(&mut node.left);
+        self.visit_expr_mut(&mut node.right);
     }
 
     fn visit_expr_match_mut(&mut self, node: &mut ExprMatch) {
         // visit the match's expression
-        self.visit_expr_mut(&mut *node.expr);
+        self.visit_expr_mut(&mut node.expr);
 
         // visit the match's arms
         for arm in node.arms.iter_mut() {
@@ -239,7 +236,7 @@ impl VisitMut for IdentVisitor {
 
     fn visit_expr_method_call_mut(&mut self, node: &mut ExprMethodCall) {
         // visit method call's receiver
-        self.visit_expr_mut(&mut *node.receiver);
+        self.visit_expr_mut(&mut node.receiver);
 
         // replace method identifier only if it was defined by the user
         self.replace_identifier_if_mapped(node);
@@ -256,7 +253,7 @@ impl VisitMut for IdentVisitor {
 
     fn visit_expr_call_mut(&mut self, node: &mut ExprCall) {
         // visit the call's function name
-        self.visit_expr_mut(&mut *node.func);
+        self.visit_expr_mut(&mut node.func);
 
         // visit the call's arguments
         for arg in node.args.iter_mut() {
@@ -271,12 +268,12 @@ impl VisitMut for IdentVisitor {
         }
 
         // visit the closure's body
-        self.visit_expr_mut(&mut *node.body);
+        self.visit_expr_mut(&mut node.body);
     }
 
     fn visit_expr_field_mut(&mut self, node: &mut ExprField) {
         // visit the struct field's base
-        self.visit_expr_mut(&mut *node.base);
+        self.visit_expr_mut(&mut node.base);
 
         // visit the struct field's member
         self.visit_member_mut(&mut node.member);
@@ -287,7 +284,7 @@ impl VisitMut for IdentVisitor {
         self.visit_pat_mut(&mut node.pat);
 
         // visit the for loop's expression
-        self.visit_expr_mut(&mut *node.expr);
+        self.visit_expr_mut(&mut node.expr);
 
         // visit the for loop's body
         self.visit_block_mut(&mut node.body);
@@ -300,7 +297,7 @@ impl VisitMut for IdentVisitor {
 
     fn visit_expr_while_mut(&mut self, node: &mut ExprWhile) {
         // visit while loop's condition
-        self.visit_expr_mut(&mut *node.cond);
+        self.visit_expr_mut(&mut node.cond);
 
         // visit while loop's body
         self.visit_block_mut(&mut node.body);
@@ -308,7 +305,7 @@ impl VisitMut for IdentVisitor {
 
     fn visit_expr_if_mut(&mut self, node: &mut ExprIf) {
         // visit if expression's condition
-        self.visit_expr_mut(&mut *node.cond);
+        self.visit_expr_mut(&mut node.cond);
 
         // visit if expression's then branch
         self.visit_block_mut(&mut node.then_branch);
@@ -321,15 +318,15 @@ impl VisitMut for IdentVisitor {
 
     fn visit_expr_unary_mut(&mut self, node: &mut ExprUnary) {
         // visit the unary's expression
-        self.visit_expr_mut(&mut *node.expr);
+        self.visit_expr_mut(&mut node.expr);
     }
 
     fn visit_expr_type_mut(&mut self, node: &mut ExprType) {
         // visit the expression
-        self.visit_expr_mut(&mut *node.expr);
+        self.visit_expr_mut(&mut node.expr);
 
         // visit the type
-        self.visit_type_mut(&mut *node.ty);
+        self.visit_type_mut(&mut node.ty);
     }
 
     fn visit_expr_let_mut(&mut self, node: &mut ExprLet) {
@@ -342,7 +339,7 @@ impl VisitMut for IdentVisitor {
 
     fn visit_path_mut(&mut self, node: &mut Path) {
         // visit a path if it is an identifier
-        if let Some(_) = node.get_ident() {
+        if node.get_ident().is_some() {
             // this is fine since we know `node` only contains a
             // single PathSegment which is an identifier
             self.visit_path_segment_mut(node.segments.first_mut().unwrap());
