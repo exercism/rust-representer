@@ -2,11 +2,11 @@ use quote::quote;
 use syn::punctuated::Punctuated;
 use syn::visit_mut::VisitMut;
 use syn::{
-    Arm, Expr, ExprAssignOp, ExprBinary, ExprCall, ExprClosure, ExprField, ExprForLoop, ExprIf,
-    ExprLet, ExprLoop, ExprMatch, ExprMethodCall, ExprPath, ExprType, ExprUnary, ExprWhile, Field,
-    Fields, FnArg, ItemConst, ItemEnum, ItemFn, ItemImpl, ItemStatic, ItemStruct, ItemTrait,
-    ItemType, ItemUnion, Macro, Member, Pat, PatIdent, PatTuple, PatType, Path, PathSegment,
-    ReturnType, Signature, Token, Type, Variant,
+    Arm, Expr, ExprAssign, ExprBinary, ExprCall, ExprClosure, ExprField, ExprForLoop, ExprIf,
+    ExprLet, ExprLoop, ExprMatch, ExprMethodCall, ExprPath, ExprUnary, ExprWhile, Field, Fields,
+    FnArg, ItemConst, ItemEnum, ItemFn, ItemImpl, ItemStatic, ItemStruct, ItemTrait, ItemType,
+    ItemUnion, Macro, Member, Pat, PatIdent, PatTuple, PatType, Path, PathSegment, ReturnType,
+    Signature, Token, Type, Variant,
 };
 
 use crate::ident_visitor::IdentVisitor;
@@ -191,7 +191,7 @@ impl VisitMut for IdentVisitor {
     fn visit_expr_mut(&mut self, node: &mut Expr) {
         use Expr::*;
         match node {
-            AssignOp(expr_assign_op) => self.visit_expr_assign_op_mut(expr_assign_op),
+            Assign(expr_assign_op) => self.visit_expr_assign_mut(expr_assign_op),
             Binary(expr_binary) => self.visit_expr_binary_mut(expr_binary),
             Block(expr_block) => self.visit_expr_block_mut(expr_block),
             Call(expr_call) => self.visit_expr_call_mut(expr_call),
@@ -205,14 +205,13 @@ impl VisitMut for IdentVisitor {
             Match(expr_match) => self.visit_expr_match_mut(expr_match),
             MethodCall(expr_method_call) => self.visit_expr_method_call_mut(expr_method_call),
             Path(expr_path) => self.visit_expr_path_mut(expr_path),
-            Type(expr_type) => self.visit_expr_type_mut(expr_type),
             Unary(expr_unary) => self.visit_expr_unary_mut(expr_unary),
             While(expr_while) => self.visit_expr_while_mut(expr_while),
             _ => {}
         }
     }
 
-    fn visit_expr_assign_op_mut(&mut self, node: &mut ExprAssignOp) {
+    fn visit_expr_assign_mut(&mut self, node: &mut ExprAssign) {
         // visit the left and right sides of the assignment op
         self.visit_expr_mut(&mut node.left);
         self.visit_expr_mut(&mut node.right);
@@ -319,14 +318,6 @@ impl VisitMut for IdentVisitor {
     fn visit_expr_unary_mut(&mut self, node: &mut ExprUnary) {
         // visit the unary's expression
         self.visit_expr_mut(&mut node.expr);
-    }
-
-    fn visit_expr_type_mut(&mut self, node: &mut ExprType) {
-        // visit the expression
-        self.visit_expr_mut(&mut node.expr);
-
-        // visit the type
-        self.visit_type_mut(&mut node.ty);
     }
 
     fn visit_expr_let_mut(&mut self, node: &mut ExprLet) {

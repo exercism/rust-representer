@@ -1,1 +1,1 @@
-fn main ( ) { let PLACEHOLDER_1 = 5 ; println ! ( "{}" , PLACEHOLDER_1 ) ; }
+fn main () { let PLACEHOLDER_1 = 5 ; println ! ("{}" , PLACEHOLDER_1) ; }
