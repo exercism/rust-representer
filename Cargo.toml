@@ -9,7 +9,7 @@ description = "A normalizing representer for Exercism's Rust track."
 
 [dependencies]
 clap = "4.3.19"
-quote = "1.0"
 lazy_static = "1.4.0"
 proc-macro2 = "1.0.18"
+quote = "1.0"
 syn = { version = "2.0.27", features = ["full", "visit-mut"] }
