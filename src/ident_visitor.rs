@@ -1,9 +1,8 @@
 use crate::replace_identifier::*;
+use crate::PLACEHOLDER;
 use std::collections::hash_map::Entry;
 use std::collections::HashMap;
 use std::collections::HashSet;
-
-const PLACEHOLDER: &str = "PLACEHOLDER_";
 
 // Set to persist any keywords for identifiers
 // we don't want to be replaced

@@ -32,7 +32,10 @@ fn init_app() -> ArgMatches {
 
 fn main() {
     let matches = init_app();
-    let path = format!("{}src/lib.rs", matches.get_one::<String>("input_path").unwrap());
+    let path = format!(
+        "{}src/lib.rs",
+        matches.get_one::<String>("input_path").unwrap()
+    );
 
     if let Err(error) = run(&path, &matches.get_one::<String>("output_path").unwrap()) {
         eprintln!("[error] {}", error);
