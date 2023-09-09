@@ -1,4 +1,4 @@
-FROM rust:1.71-slim as base
+FROM rust:1.72-slim as base
 
 WORKDIR /representer
 
@@ -20,4 +20,4 @@ WORKDIR /opt/representer
 
 COPY --from=base /representer/bin/* ./bin/
 
-ENTRYPOINT ["bin/generate.sh"]
+ENTRYPOINT ["bin/run.sh"]

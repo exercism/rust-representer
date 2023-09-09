@@ -14,10 +14,17 @@ fn init_app() -> ArgMatches {
                 .required(true),
         )
         .arg(
-            Arg::new("path")
-                .short('p')
-                .long("path")
+            Arg::new("input_path")
+                .short('i')
+                .long("input-path")
                 .help("A path to a directory containing the submitted file(s).")
+                .required(true),
+        )
+        .arg(
+            Arg::new("output_path")
+                .short('o')
+                .long("output-path")
+                .help("A path to a directory where the output file(s) will be written.")
                 .required(true),
         )
         .get_matches()
@@ -25,9 +32,9 @@ fn init_app() -> ArgMatches {
 
 fn main() {
     let matches = init_app();
-    let path = format!("{}src/lib.rs", matches.get_one::<String>("path").unwrap());
+    let path = format!("{}src/lib.rs", matches.get_one::<String>("input_path").unwrap());
 
-    if let Err(error) = run(&path) {
+    if let Err(error) = run(&path, &matches.get_one::<String>("output_path").unwrap()) {
         eprintln!("[error] {}", error);
         process::exit(1);
     }
