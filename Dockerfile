@@ -18,6 +18,6 @@ FROM alpine:latest
 
 WORKDIR /opt/representer
 
-COPY --from=base /representer /opt/representer
+COPY --from=base /representer/bin /opt/representer/bin
 
 ENTRYPOINT ["bin/run.sh"]
