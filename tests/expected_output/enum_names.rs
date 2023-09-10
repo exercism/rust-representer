@@ -1,1 +1,2 @@
-enum PLACEHOLDER_1 { } pub enum PLACEHOLDER_2 { }
+enum PLACEHOLDER_1 {}
+pub enum PLACEHOLDER_2 {}

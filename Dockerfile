@@ -1,6 +1,6 @@
 FROM rust:1.72-slim as base
 
-WORKDIR /opt/representer
+WORKDIR /representer
 
 COPY . .
 
@@ -13,5 +13,11 @@ RUN apt-get update && \
 # Build rust-representer
 RUN cargo build --release --target=x86_64-unknown-linux-musl && \
     cp target/x86_64-unknown-linux-musl/release/rust-representer ./bin/
+
+FROM alpine:latest
+
+WORKDIR /opt/representer
+
+COPY --from=base /representer /opt/representer
 
 ENTRYPOINT ["bin/run.sh"]

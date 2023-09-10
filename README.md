@@ -63,18 +63,17 @@ Currently the following statement/expression types are visited by the represente
 - [ ] user-defined types
 - [ ] user-defined traits
 - [ ] `mod` imports
-- [ ] output variable mappings to a JSON file
+- [x] output variable mappings to a JSON file
 
 ## Design
 
 The high-level steps the representer takes are as follows:
 
-1. It first makes a formatting pass over the code using `rustfmt` in order to ensure whitespace and spacing are consistent in the input source code.
-2. It then transforms the source code into an AST, stripping out comments in the process. 
-3. From there, it traverses the AST, looking for identifiers.
-4. When it finds an identifier:
+1. It transforms the source code into an AST, stripping out comments in the process. 
+2. From there, it traverses the AST, looking for identifiers.
+3. When it finds an identifier:
     - It checks whether the identifier is a Rust keyword (or any other sort of identifier that isn't actually being used as a variable/function name).
     - If the identifier isn't a keyword, it then checks if the identifier is one that has been encountered before.
         - If it is, then a placeholder for this identifier has already been generated and stored in a HashMap; the identifier is replaced with the placeholder.
         - If it isn't, then the placeholder needs to be generated and saved in the HashMap before the identifier is replaced by it.
-5. The transformed output is then put through another formatting pass. 
+4. The transformed output is then put through another formatting pass. 
