@@ -207,6 +207,8 @@ impl VisitMut for IdentVisitor {
             Path(expr_path) => self.visit_expr_path_mut(expr_path),
             Unary(expr_unary) => self.visit_expr_unary_mut(expr_unary),
             While(expr_while) => self.visit_expr_while_mut(expr_while),
+            Lit(expr_lit) => self.visit_expr_lit_mut(expr_lit),
+            Paren(expr_paren) => self.visit_expr_paren_mut(expr_paren),
             _ => {}
         }
     }

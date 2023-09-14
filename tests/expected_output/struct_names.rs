@@ -1,1 +1,1 @@
-struct PLACEHOLDER_1 ;
+struct PLACEHOLDER_1;

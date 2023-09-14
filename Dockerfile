@@ -1,4 +1,4 @@
-FROM rust:1.71-slim as base
+FROM rust:1.72-slim as base
 
 WORKDIR /representer
 
@@ -18,6 +18,6 @@ FROM alpine:latest
 
 WORKDIR /opt/representer
 
-COPY --from=base /representer/bin/* ./bin/
+COPY --from=base /representer/bin /opt/representer/bin
 
-ENTRYPOINT ["bin/generate.sh"]
+ENTRYPOINT ["bin/run.sh"]

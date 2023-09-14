@@ -1,1 +1,4 @@
-pub struct PLACEHOLDER_1 { PLACEHOLDER_2 : A , PLACEHOLDER_3 : B , }
+pub struct PLACEHOLDER_1 {
+    PLACEHOLDER_2: A,
+    PLACEHOLDER_3: B,
+}
