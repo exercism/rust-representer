@@ -1,0 +1,3 @@
+pub fn PLACEHOLDER_1(PLACEHOLDER_2: u64) -> bool {
+    PLACEHOLDER_2 % 4 == 0 && (PLACEHOLDER_2 % 100 != 0 || PLACEHOLDER_2 % 400 == 0)
+}

@@ -339,3 +339,15 @@ fn test_user_defined_traits() -> Result<(), Box<dyn Error>> {
 
     Ok(())
 }
+
+#[test]
+fn test_leap_year() -> Result<(), Box<dyn Error>> {
+    let input = include_str!("test_input/leap_year.rs");
+    let expected = include_str!("expected_output/leap_year.rs");
+
+    let mut input: syn::File = syn::parse_str(input)?;
+    let _ = replace(&mut input);
+    assert_eq!(prettyplease::unparse(&input), expected);
+
+    Ok(())
+}
