@@ -1,24 +1,90 @@
+use proc_macro2::Ident;
 use quote::quote;
 use syn::punctuated::Punctuated;
 use syn::visit_mut::VisitMut;
 use syn::{
-    Arm, Expr, ExprAssign, ExprBinary, ExprCall, ExprClosure, ExprField, ExprForLoop, ExprIf,
-    ExprLet, ExprLoop, ExprMatch, ExprMethodCall, ExprPath, ExprUnary, ExprWhile, Field, Fields,
-    FnArg, ItemConst, ItemEnum, ItemFn, ItemImpl, ItemStatic, ItemStruct, ItemTrait, ItemType,
-    ItemUnion, Macro, Member, Pat, PatIdent, PatTuple, PatType, Path, PathSegment, ReturnType,
-    Signature, Token, Type, Variant,
+    Arm, ConstParam, Expr, ExprAssign, ExprBinary, ExprCall, ExprClosure, ExprField, ExprForLoop,
+    ExprIf, ExprLet, ExprLoop, ExprMatch, ExprMethodCall, ExprPath, ExprUnary, ExprWhile, Field,
+    Fields, FnArg, Item, ItemConst, ItemEnum, ItemFn, ItemImpl, ItemStatic, ItemStruct, ItemTrait,
+    ItemType, ItemUnion, Macro, Member, Pat, PatIdent, PatTuple, PatType, Path, PathSegment,
+    ReturnType, Signature, Token, Type, TypeParam, Variant,
 };
 
 use crate::ident_visitor::IdentVisitor;
 
+fn get_ident(item: &syn::Item) -> Option<syn::Ident> {
+    match item {
+        Item::Const(item_const) => Some(item_const.ident.clone()),
+        Item::Enum(item_enum) => Some(item_enum.ident.clone()),
+        Item::Fn(item_fn) => Some(item_fn.sig.ident.clone()),
+        Item::ExternCrate(item_extern_crate) => Some(item_extern_crate.ident.clone()),
+        Item::Impl(_) => {
+            //TODO: Handle better
+            None
+        }
+        Item::ForeignMod(item_mod) => item_mod
+            .abi
+            .name
+            .clone()
+            .map(|name| Ident::new(&name.value(), name.span())),
+        Item::Macro(item_macro) => item_macro.ident.clone(),
+        Item::Static(item_static) => Some(item_static.ident.clone()),
+        Item::Struct(item_struct) => Some(item_struct.ident.clone()),
+        Item::Trait(item_trait) => Some(item_trait.ident.clone()),
+        Item::TraitAlias(item_trait_alias) => Some(item_trait_alias.ident.clone()),
+        Item::Type(item_type) => Some(item_type.ident.clone()),
+        Item::Union(item_union) => Some(item_union.ident.clone()),
+        Item::Use(_) => {
+            //TODO: Handle better
+            None
+        }
+        Item::Verbatim(_) => {
+            //TODO: Handle better
+            None
+        }
+        _ => None,
+    }
+}
+
 impl VisitMut for IdentVisitor {
+    fn visit_file_mut(&mut self, i: &mut syn::File) {
+        i.items
+            .sort_by(|item1, item2| match (get_ident(item1), get_ident(item2)) {
+                (Some(ident1), Some(ident2)) => ident1.cmp(&ident2),
+                (Some(_), None) => std::cmp::Ordering::Less,
+                (None, Some(_)) => std::cmp::Ordering::Greater,
+                (None, None) => std::cmp::Ordering::Equal,
+            });
+        for it in &mut i.attrs {
+            self.visit_attribute_mut(it);
+        }
+        for it in &mut i.items {
+            self.visit_item_mut(it);
+        }
+    }
+
     fn visit_pat_ident_mut(&mut self, node: &mut PatIdent) {
         self.replace_identifier(node);
+    }
+
+    fn visit_type_param_mut(&mut self, node: &mut TypeParam) {
+        self.replace_identifier(node);
+    }
+
+    fn visit_const_param_mut(&mut self, node: &mut ConstParam) {
+        self.replace_identifier(node);
+    }
+
+    fn visit_lifetime_param_mut(&mut self, i: &mut syn::LifetimeParam) {
+        self.replace_identifier(i);
     }
 
     fn visit_item_struct_mut(&mut self, node: &mut ItemStruct) {
         // visit struct's identifier
         self.replace_identifier(node);
+
+        // visit generics
+        self.visit_generics_mut(&mut node.generics);
 
         // visit struct's fields
         for field in node.fields.iter_mut() {
@@ -57,6 +123,7 @@ impl VisitMut for IdentVisitor {
                 self.replace_identifier_if_mapped(segment);
             }
         }
+        self.visit_generics_mut(&mut node.generics);
 
         // visit the impl's type
         self.visit_type_mut(&mut node.self_ty);
@@ -176,6 +243,7 @@ impl VisitMut for IdentVisitor {
 
             for segment in segments.iter_mut() {
                 self.replace_identifier_if_mapped(segment);
+                self.visit_path_arguments_mut(&mut segment.arguments);
             }
 
             type_path.path.segments = segments;

@@ -293,6 +293,18 @@ fn test_typed_let_binding() -> Result<(), Box<dyn Error>> {
 }
 
 #[test]
+fn test_ignore_comments() -> Result<(), Box<dyn Error>> {
+    let input = include_str!("test_input/ignore_comments.rs");
+    let expected = include_str!("expected_output/ignore_comments.rs");
+
+    let mut input: syn::File = syn::parse_str(input)?;
+    let _ = replace(&mut input);
+    assert_eq!(prettyplease::unparse(&input), expected);
+
+    Ok(())
+}
+
+#[test]
 fn test_ignore_doc_comments() -> Result<(), Box<dyn Error>> {
     let input = include_str!("test_input/ignore_doc_comments.rs");
     let expected = include_str!("expected_output/ignore_doc_comments.rs");
@@ -332,6 +344,30 @@ fn test_user_defined_types() -> Result<(), Box<dyn Error>> {
 fn test_user_defined_traits() -> Result<(), Box<dyn Error>> {
     let input = include_str!("test_input/user_defined_traits.rs");
     let expected = include_str!("expected_output/user_defined_traits.rs");
+
+    let mut input: syn::File = syn::parse_str(input)?;
+    let _ = replace(&mut input);
+    assert_eq!(prettyplease::unparse(&input), expected);
+
+    Ok(())
+}
+
+#[test]
+fn test_sort_by_ascii_file_items() -> Result<(), Box<dyn Error>> {
+    let input = include_str!("test_input/sort_by_ascii_file_items.rs");
+    let expected = include_str!("expected_output/sort_by_ascii_file_items.rs");
+
+    let mut input: syn::File = syn::parse_str(input)?;
+    let _ = replace(&mut input);
+    assert_eq!(prettyplease::unparse(&input), expected);
+
+    Ok(())
+}
+
+#[test]
+fn test_generics() -> Result<(), Box<dyn Error>> {
+    let input = include_str!("test_input/generics.rs");
+    let expected = include_str!("expected_output/generics.rs");
 
     let mut input: syn::File = syn::parse_str(input)?;
     let _ = replace(&mut input);

@@ -1,7 +1,8 @@
 use proc_macro2::{Ident, Span};
 use syn::{
-    ExprMethodCall, Field, ItemConst, ItemEnum, ItemStatic, ItemStruct, ItemTrait, ItemType,
-    ItemUnion, Member, PatIdent, PathSegment, Signature, Variant,
+    ConstParam, ExprMethodCall, Field, ItemConst, ItemEnum, ItemStatic, ItemStruct, ItemTrait,
+    ItemType, ItemUnion, LifetimeParam, Member, PatIdent, PathSegment, Signature, TypeParam,
+    Variant,
 };
 
 // encapsulates fetching and updating a node's identifier
@@ -15,6 +16,36 @@ pub trait ReplaceIdentifier {
 pub trait ReplacePossibleIdentifier {
     fn ident_string(&self) -> Option<String>;
     fn set_ident(&mut self, ident: String);
+}
+
+impl ReplaceIdentifier for TypeParam {
+    fn ident_string(&self) -> String {
+        self.ident.to_string()
+    }
+
+    fn set_ident(&mut self, ident: String) {
+        self.ident = Ident::new(&ident, Span::call_site());
+    }
+}
+
+impl ReplaceIdentifier for ConstParam {
+    fn ident_string(&self) -> String {
+        self.ident.to_string()
+    }
+
+    fn set_ident(&mut self, ident: String) {
+        self.ident = Ident::new(&ident, Span::call_site());
+    }
+}
+
+impl ReplaceIdentifier for LifetimeParam {
+    fn ident_string(&self) -> String {
+        self.lifetime.ident.to_string()
+    }
+
+    fn set_ident(&mut self, ident: String) {
+        self.lifetime.ident = Ident::new(&ident, Span::call_site());
+    }
 }
 
 impl ReplaceIdentifier for PatIdent {
