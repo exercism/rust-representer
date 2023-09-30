@@ -5,14 +5,14 @@ use syn::visit_mut::VisitMut;
 use syn::{
     Arm, ConstParam, Expr, ExprAssign, ExprBinary, ExprCall, ExprClosure, ExprField, ExprForLoop,
     ExprIf, ExprLet, ExprLoop, ExprMatch, ExprMethodCall, ExprPath, ExprUnary, ExprWhile, Field,
-    Fields, FnArg, Item, ItemConst, ItemEnum, ItemFn, ItemImpl, ItemStatic, ItemStruct, ItemTrait,
-    ItemType, ItemUnion, Macro, Member, Pat, PatIdent, PatTuple, PatType, Path, PathSegment,
-    ReturnType, Signature, Token, Type, TypeParam, Variant,
+    Fields, FnArg, ImplItem, Item, ItemConst, ItemEnum, ItemFn, ItemImpl, ItemStatic, ItemStruct,
+    ItemTrait, ItemType, ItemUnion, Macro, Member, Pat, PatIdent, PatTuple, PatType, Path,
+    PathSegment, ReturnType, Signature, Token, Type, TypeParam, Variant,
 };
 
 use crate::ident_visitor::IdentVisitor;
 
-fn get_ident(item: &syn::Item) -> Option<syn::Ident> {
+fn get_ident(item: &Item) -> Option<syn::Ident> {
     match item {
         Item::Const(item_const) => Some(item_const.ident.clone()),
         Item::Enum(item_enum) => Some(item_enum.ident.clone()),
@@ -39,6 +39,23 @@ fn get_ident(item: &syn::Item) -> Option<syn::Ident> {
             None
         }
         Item::Verbatim(_) => {
+            //TODO: Handle better
+            None
+        }
+        _ => None,
+    }
+}
+
+fn get_impl_item_ident(item: &ImplItem) -> Option<syn::Ident> {
+    match item {
+        ImplItem::Const(item_const) => Some(item_const.ident.clone()),
+        ImplItem::Fn(item_method) => Some(item_method.sig.ident.clone()),
+        ImplItem::Macro(_) => {
+            //TODO: Handle better
+            None
+        }
+        ImplItem::Type(item_type) => Some(item_type.ident.clone()),
+        ImplItem::Verbatim(_) => {
             //TODO: Handle better
             None
         }
@@ -127,6 +144,15 @@ impl VisitMut for IdentVisitor {
 
         // visit the impl's type
         self.visit_type_mut(&mut node.self_ty);
+
+        node.items.sort_by(|item1, item2| {
+            match (get_impl_item_ident(item1), get_impl_item_ident(item2)) {
+                (Some(ident1), Some(ident2)) => ident1.cmp(&ident2),
+                (Some(_), None) => std::cmp::Ordering::Less,
+                (None, Some(_)) => std::cmp::Ordering::Greater,
+                (None, None) => std::cmp::Ordering::Equal,
+            }
+        });
 
         // visit the impl's items
         for impl_item in node.items.iter_mut() {

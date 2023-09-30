@@ -7,12 +7,12 @@ fn PLACEHOLDER_4() {
 }
 impl PLACEHOLDER_1 {
     fn PLACEHOLDER_6() {
-        let PLACEHOLDER_7 = 3;
+        let PLACEHOLDER_7 = 1;
     }
     fn PLACEHOLDER_8() {
-        let PLACEHOLDER_9 = 1;
+        let PLACEHOLDER_9 = 2;
     }
     fn PLACEHOLDER_10() {
-        let PLACEHOLDER_11 = 2;
+        let PLACEHOLDER_11 = 3;
     }
 }
