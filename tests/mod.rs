@@ -2,8 +2,6 @@ use rust_representer::replace;
 use std::error::Error;
 use std::include_str;
 
-// TODO: Add checks on the placeholders values
-
 #[test]
 fn test_let_bindings() -> Result<(), Box<dyn Error>> {
     let input = include_str!("test_input/let_bindings.rs");

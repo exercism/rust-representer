@@ -18,10 +18,7 @@ fn get_ident(item: &Item) -> Option<syn::Ident> {
         Item::Enum(item_enum) => Some(item_enum.ident.clone()),
         Item::Fn(item_fn) => Some(item_fn.sig.ident.clone()),
         Item::ExternCrate(item_extern_crate) => Some(item_extern_crate.ident.clone()),
-        Item::Impl(_) => {
-            //TODO: Handle better
-            None
-        }
+        Item::Impl(_) => None,
         Item::ForeignMod(item_mod) => item_mod
             .abi
             .name
@@ -34,14 +31,8 @@ fn get_ident(item: &Item) -> Option<syn::Ident> {
         Item::TraitAlias(item_trait_alias) => Some(item_trait_alias.ident.clone()),
         Item::Type(item_type) => Some(item_type.ident.clone()),
         Item::Union(item_union) => Some(item_union.ident.clone()),
-        Item::Use(_) => {
-            //TODO: Handle better
-            None
-        }
-        Item::Verbatim(_) => {
-            //TODO: Handle better
-            None
-        }
+        Item::Use(_) => None,
+        Item::Verbatim(_) => None,
         _ => None,
     }
 }
@@ -50,22 +41,22 @@ fn get_impl_item_ident(item: &ImplItem) -> Option<syn::Ident> {
     match item {
         ImplItem::Const(item_const) => Some(item_const.ident.clone()),
         ImplItem::Fn(item_method) => Some(item_method.sig.ident.clone()),
-        ImplItem::Macro(_) => {
-            //TODO: Handle better
-            None
-        }
+        ImplItem::Macro(_) => None,
         ImplItem::Type(item_type) => Some(item_type.ident.clone()),
-        ImplItem::Verbatim(_) => {
-            //TODO: Handle better
-            None
-        }
+        ImplItem::Verbatim(_) => None,
         _ => None,
     }
 }
 
 impl VisitMut for IdentVisitor {
     fn visit_file_mut(&mut self, i: &mut syn::File) {
-        i.items.sort_by_cached_key(get_ident);
+        i.items
+            .sort_by(|item1, item2| match (get_ident(item1), get_ident(item2)) {
+                (Some(ident1), Some(ident2)) => ident1.cmp(&ident2),
+                (Some(_), None) => std::cmp::Ordering::Less,
+                (None, Some(_)) => std::cmp::Ordering::Greater,
+                (None, None) => std::cmp::Ordering::Equal,
+            });
         for it in &mut i.attrs {
             self.visit_attribute_mut(it);
         }
@@ -256,7 +247,6 @@ impl VisitMut for IdentVisitor {
 
             for segment in segments.iter_mut() {
                 self.replace_identifier_if_mapped(segment);
-                self.visit_path_arguments_mut(&mut segment.arguments);
             }
 
             type_path.path.segments = segments;
