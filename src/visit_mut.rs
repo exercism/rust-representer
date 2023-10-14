@@ -247,6 +247,7 @@ impl VisitMut for IdentVisitor {
 
             for segment in segments.iter_mut() {
                 self.replace_identifier_if_mapped(segment);
+                self.visit_path_arguments_mut(&mut segment.arguments);
             }
 
             type_path.path.segments = segments;
