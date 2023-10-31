@@ -9,3 +9,6 @@
 .gitattributes
 .dockerignore
 Dockerfile
+bin/
+!bin/run.sh
+tests/
