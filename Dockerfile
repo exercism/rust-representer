@@ -14,7 +14,7 @@ RUN apt-get update && \
 RUN cargo build --release --target=x86_64-unknown-linux-musl && \
     cp target/x86_64-unknown-linux-musl/release/rust-representer ./bin/
 
-FROM alpine:latest
+FROM alpine:3.18.4
 
 WORKDIR /opt/representer
 
