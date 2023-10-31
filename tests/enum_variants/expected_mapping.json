@@ -1,8 +1,8 @@
 {
+  "PLACEHOLDER_1": "MyEnum",
+  "PLACEHOLDER_2": "Foo",
+  "PLACEHOLDER_3": "Bar",
   "PLACEHOLDER_4": "Variants",
   "PLACEHOLDER_5": "First",
-  "PLACEHOLDER_2": "Foo",
-  "PLACEHOLDER_1": "MyEnum",
-  "PLACEHOLDER_3": "Bar",
   "PLACEHOLDER_6": "Second"
 }
