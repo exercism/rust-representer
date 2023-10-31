@@ -7,7 +7,7 @@ mod visit_mut;
 
 use ident_visitor::IdentVisitor;
 use serde_json::json;
-use std::collections::HashMap;
+use std::collections::BTreeMap;
 use std::fs::File;
 use std::io::prelude::*;
 use syn::visit_mut::VisitMut;
@@ -19,7 +19,7 @@ const MAPPINGS_FILE: &str = "mapping.json";
 const REPRESENTATION_FILE: &str = "representation.json";
 
 // The entry point that kicks off the process of visiting the AST
-pub fn replace(ast: &mut syn::File) -> HashMap<String, String> {
+pub fn replace(ast: &mut syn::File) -> BTreeMap<String, String> {
     let mut visitor = IdentVisitor::new();
     visitor.visit_file_mut(ast);
 
