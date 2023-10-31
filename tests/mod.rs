@@ -9,8 +9,8 @@ macro_rules! test_cases {
         $(
             #[test]
             fn $name() -> Result<(), Box<dyn Error>> {
-                let input = include_str!(concat!(stringify!($name), "src", "lib.rs"));
-                let expected = include_str!(concat!(stringify!($name), "expected_representation.txt"));
+                let input = include_str!(concat!(stringify!($name), "/src/lib.rs"));
+                let expected = include_str!(concat!(stringify!($name), "/expected_representation.txt"));
 
                 let mut input: syn::File = syn::parse_str(input)?;
                 let _ = replace(&mut input);
