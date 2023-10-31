@@ -2,3 +2,5 @@
 **/*.rs.bk
 *.swp
 .DS_Store
+tests/**/*/mapping.json
+tests/**/*/representation.txt
