@@ -9,14 +9,14 @@ macro_rules! test_cases {
         $(
             #[test]
             fn $name() -> Result<(), Box<dyn Error>> {
-                let input = include_str!(concat!("test_input/", stringify!($name), ".rs"));
-                let expected = include_str!(concat!("expected_output/", stringify!($name), ".rs"));
+                let input = include_str!(concat!(stringify!($name), "src", "lib.rs"));
+                let expected = include_str!(concat!(stringify!($name), "expected_representation.txt"));
 
                 let mut input: syn::File = syn::parse_str(input)?;
                 let _ = replace(&mut input);
 
                 if OVERWRITE_EXPECTED_OUTPUT {
-                    std::fs::write(concat!("tests/expected_output/", stringify!($name), ".rs"), prettyplease::unparse(&input))?;
+                    std::fs::write(concat!("tests", stringify!($name), "expected_representation.txt"), prettyplease::unparse(&input))?;
                 } else {
                     assert_eq!(prettyplease::unparse(&input), expected);
                 }
