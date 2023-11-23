@@ -37,7 +37,7 @@ fn main() {
         matches.get_one::<String>("input_path").unwrap()
     );
 
-    if let Err(error) = run(&path, &matches.get_one::<String>("output_path").unwrap()) {
+    if let Err(error) = run(&path, matches.get_one::<String>("output_path").unwrap()) {
         eprintln!("[error] {}", error);
         process::exit(1);
     }
