@@ -1,17 +1,17 @@
-struct PLACEHOLDER_1 {
-    PLACEHOLDER_2: i32,
+impl C for A {
+    fn PLACEHOLDER_1(&self) {
+        let PLACEHOLDER_1 = 10;
+    }
+}
+struct PLACEHOLDER_2 {
+    PLACEHOLDER_1: i32,
 }
 enum PLACEHOLDER_3 {
-    PLACEHOLDER_1,
+    PLACEHOLDER_2,
 }
 trait PLACEHOLDER_4 {
-    fn PLACEHOLDER_2(&self);
+    fn PLACEHOLDER_1(&self);
 }
 fn main() {
-    let PLACEHOLDER_2 = 10;
-}
-impl PLACEHOLDER_4 for PLACEHOLDER_1 {
-    fn PLACEHOLDER_2(&self) {
-        let PLACEHOLDER_2 = 10;
-    }
+    let PLACEHOLDER_1 = 10;
 }

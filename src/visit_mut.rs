@@ -50,13 +50,7 @@ fn get_impl_item_ident(item: &ImplItem) -> Option<syn::Ident> {
 
 impl VisitMut for IdentVisitor {
     fn visit_file_mut(&mut self, i: &mut syn::File) {
-        i.items
-            .sort_by(|item1, item2| match (get_ident(item1), get_ident(item2)) {
-                (Some(ident1), Some(ident2)) => ident1.cmp(&ident2),
-                (Some(_), None) => std::cmp::Ordering::Less,
-                (None, Some(_)) => std::cmp::Ordering::Greater,
-                (None, None) => std::cmp::Ordering::Equal,
-            });
+        i.items.sort_by_cached_key(get_ident);
         for it in &mut i.attrs {
             self.visit_attribute_mut(it);
         }
