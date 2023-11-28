@@ -13,10 +13,11 @@ macro_rules! test_cases {
                 let expected = include_str!(concat!(stringify!($name), "/expected_representation.txt"));
 
                 let mut input: syn::File = syn::parse_str(input)?;
-                let _ = replace(&mut input);
+                let mapping = replace(&mut input);
 
                 if OVERWRITE_EXPECTED_OUTPUT {
-                    std::fs::write(concat!("tests", stringify!($name), "expected_representation.txt"), prettyplease::unparse(&input))?;
+                    std::fs::write(concat!("tests/", stringify!($name), "/expected_representation.txt"), prettyplease::unparse(&input))?;
+                    std::fs::write(concat!("tests/", stringify!($name), "/expected_mapping.json"), serde_json::to_string_pretty(&mapping).unwrap())?;
                 } else {
                     assert_eq!(prettyplease::unparse(&input), expected);
                 }
@@ -37,8 +38,10 @@ test_cases!(
     fn_calls
     fn_names
     for_loops
+    generics
     if_expressions
     if_let_expressions
+    ignore_comments
     ignore_doc_comments
     impl_blocks
     leap_year
@@ -49,6 +52,7 @@ test_cases!(
     match_expressions
     method_calls
     replace_same_identifier
+    sort_by_ascii_file_items
     static_names
     struct_fields
     struct_names

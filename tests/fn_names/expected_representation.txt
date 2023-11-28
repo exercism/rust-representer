@@ -1,2 +1,2 @@
-fn PLACEHOLDER_1(&mut self) {}
-pub unsafe fn PLACEHOLDER_2(&self) -> bool {}
+pub unsafe fn PLACEHOLDER_1(&self) -> bool {}
+fn PLACEHOLDER_2(&mut self) {}

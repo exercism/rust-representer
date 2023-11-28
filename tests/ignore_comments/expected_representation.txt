@@ -1,0 +1,17 @@
+impl C for A {
+    fn PLACEHOLDER_1(&self) {
+        let PLACEHOLDER_1 = 10;
+    }
+}
+struct PLACEHOLDER_2 {
+    PLACEHOLDER_1: i32,
+}
+enum PLACEHOLDER_3 {
+    PLACEHOLDER_2,
+}
+trait PLACEHOLDER_4 {
+    fn PLACEHOLDER_1(&self);
+}
+fn main() {
+    let PLACEHOLDER_1 = 10;
+}

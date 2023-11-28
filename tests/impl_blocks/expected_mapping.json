@@ -1,7 +1,7 @@
 {
-  "PLACEHOLDER_1": "Example",
+  "PLACEHOLDER_1": "answer",
   "PLACEHOLDER_2": "number",
   "PLACEHOLDER_3": "boo",
-  "PLACEHOLDER_4": "answer",
-  "PLACEHOLDER_5": "get_number"
+  "PLACEHOLDER_4": "get_number",
+  "PLACEHOLDER_5": "Example"
 }
