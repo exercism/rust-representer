@@ -1,4 +1,4 @@
-FROM rust:1.72-slim as base
+FROM rust:1.72-slim AS base
 
 # Setup build environment
 RUN apt-get update && \
